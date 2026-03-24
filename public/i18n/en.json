@@ -1,5 +1,25 @@
 {
   "app": {
-    "title": "luftborn-test"
+    "title": "Task Manager",
+    "searchPlaceholder": "Search tasks..."
+  },
+  "nav": {
+    "notifications": "Notifications",
+    "changeLanguage": "Language",
+    "userAvatar": "User profile",
+    "languageEnglish": "English",
+    "languageArabic": "Arabic",
+    "switchToEnglish": "Switch to English",
+    "switchToArabic": "Switch to Arabic"
+  },
+  "sidebar": {
+    "mainNav": "Main navigation",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
+    "analytics": "Analytics",
+    "team": "Team",
+    "settings": "Settings",
+    "newTask": "New Task"
   }
 }

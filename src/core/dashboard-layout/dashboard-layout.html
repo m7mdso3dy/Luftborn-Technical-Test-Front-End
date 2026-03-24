@@ -1,0 +1,170 @@
+<div class="flex min-h-screen flex-col bg-[#f4f6f9]">
+  <header
+    class="flex h-16 shrink-0 items-center gap-6 border-b border-slate-200/90 bg-white px-6 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+  >
+    <a routerLink="/dashboard" class="flex shrink-0 items-center gap-2.5 no-underline">
+      <span
+        class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#007bff] text-white shadow-sm"
+        aria-hidden="true"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+      <span class="text-lg font-bold tracking-tight text-[#0d3b66]">{{ 'app.title' | tr: i18n.locale() }}</span>
+    </a>
+
+    <div class="relative mx-auto max-w-2xl min-w-0 flex-1">
+      <span
+        class="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+        aria-hidden="true"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" stroke-linecap="round" />
+        </svg>
+      </span>
+      <input
+        type="search"
+        [placeholder]="'app.searchPlaceholder' | tr: i18n.locale()"
+        class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 ps-11 pe-4 text-sm text-slate-800 shadow-sm outline-none ring-[#007bff]/20 placeholder:text-slate-400 focus:border-[#007bff] focus:ring-2"
+      />
+    </div>
+
+    <div class="ms-auto flex shrink-0 items-center gap-4 sm:gap-5">
+      <button
+        type="button"
+        class="rounded-lg p-2 text-[#c9a227] transition-colors hover:bg-amber-50 hover:text-[#b8941f]"
+        [attr.aria-label]="'nav.notifications' | tr: i18n.locale()"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M12 22a2 2 0 002-2H10a2 2 0 002 2zm6-6V11a6 6 0 10-12 0v5l-2 2v1h16v-1l-2-2z"
+          />
+        </svg>
+      </button>
+
+      <div
+        class="flex items-center gap-2"
+        role="group"
+        [attr.aria-label]="'nav.changeLanguage' | tr: i18n.locale()"
+      >
+        <span class="hidden text-sm text-slate-600 md:inline">{{ 'nav.changeLanguage' | tr: i18n.locale() }}</span>
+        <div class="flex rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-sm">
+          <button
+            type="button"
+            (click)="pickLang('en')"
+            [class]="langBtnClass('en')"
+            [attr.aria-pressed]="i18n.locale() === 'en'"
+            [attr.aria-label]="'nav.switchToEnglish' | tr: i18n.locale()"
+          >
+            {{ 'nav.languageEnglish' | tr: i18n.locale() }}
+          </button>
+          <button
+            type="button"
+            (click)="pickLang('ar')"
+            [class]="langBtnClass('ar')"
+            [attr.aria-pressed]="i18n.locale() === 'ar'"
+            [attr.aria-label]="'nav.switchToArabic' | tr: i18n.locale()"
+          >
+            {{ 'nav.languageArabic' | tr: i18n.locale() }}
+          </button>
+        </div>
+      </div>
+
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007bff] text-sm font-semibold text-white shadow-sm"
+        [attr.aria-label]="('nav.userAvatar' | tr: i18n.locale()) + ': ' + userInitials()"
+      >
+        {{ userInitials() }}
+      </span>
+    </div>
+  </header>
+
+  <div class="flex min-h-0 flex-1">
+    <aside
+      class="flex w-64 shrink-0 flex-col gap-1 border-e border-slate-200/50 px-4 py-6"
+      [attr.aria-label]="'sidebar.mainNav' | tr: i18n.locale()"
+    >
+      @for (item of sideNavItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="side-nav-active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          class="group side-nav-link"
+        >
+          @switch (item.icon) {
+            @case ('dashboard') {
+              <span class="text-slate-500 group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+                </svg>
+              </span>
+            }
+            @case ('tasks') {
+              <span class="text-emerald-500 group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path
+                    d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+            }
+            @case ('calendar') {
+              <span class="text-red-500 group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round" />
+                </svg>
+              </span>
+            }
+            @case ('analytics') {
+              <span class="text-[#007bff] group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19V5M4 19h16M8 17V9M12 17V7M16 17v-5" stroke-linecap="round" />
+                </svg>
+              </span>
+            }
+            @case ('team') {
+              <span class="text-[#007bff] group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="7" r="3" />
+                  <path d="M17 11a3 3 0 10-6 0M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M21 21v-2a4 4 0 00-3-3.87" />
+                </svg>
+              </span>
+            }
+            @case ('settings') {
+              <span class="text-slate-500 group-[.side-nav-active]:text-white" aria-hidden="true">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+            }
+          }
+          <span class="text-sm font-medium">{{ item.labelKey | tr: i18n.locale() }}</span>
+        </a>
+      }
+
+      <button
+        type="button"
+        class="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#007bff] text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0069d9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#007bff]"
+        (click)="onNewTask()"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+        </svg>
+        {{ 'sidebar.newTask' | tr: i18n.locale() }}
+      </button>
+    </aside>
+
+    <main class="min-h-0 min-w-0 flex-1 overflow-auto p-6">
+      <router-outlet />
+    </main>
+  </div>
+</div>

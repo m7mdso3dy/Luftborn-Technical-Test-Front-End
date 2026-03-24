@@ -1,0 +1,25 @@
+{
+  "app": {
+    "title": "مدير المهام",
+    "searchPlaceholder": "البحث في المهام..."
+  },
+  "nav": {
+    "notifications": "الإشعارات",
+    "changeLanguage": "اللغة",
+    "userAvatar": "الملف الشخصي",
+    "languageEnglish": "الإنجليزية",
+    "languageArabic": "العربية",
+    "switchToEnglish": "التبديل إلى الإنجليزية",
+    "switchToArabic": "التبديل إلى العربية"
+  },
+  "sidebar": {
+    "mainNav": "التنقل الرئيسي",
+    "dashboard": "لوحة التحكم",
+    "tasks": "المهام",
+    "calendar": "التقويم",
+    "analytics": "التحليلات",
+    "team": "الفريق",
+    "settings": "الإعدادات",
+    "newTask": "مهمة جديدة"
+  }
+}
