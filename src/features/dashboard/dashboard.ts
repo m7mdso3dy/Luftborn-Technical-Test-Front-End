@@ -1,4 +1,13 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
@@ -9,7 +18,25 @@ import {
   TaskFormCoordinatorService,
   TaskStoreService,
 } from '@shared';
-import { type Statistic, type Task, type TaskStatus } from '@shared/models/task.types';
+import {
+  type Statistic,
+  type Task,
+  type TaskPriority,
+  type TaskStatus,
+} from '@shared/models/task.types';
+
+const PRIORITY_RANK: Record<TaskPriority, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
+function taskDueMs(t: Task): number | null {
+  const raw = (t.dueAt || t.dueDate || '').trim();
+  if (!raw) return null;
+  const ms = Date.parse(raw);
+  return Number.isNaN(ms) ? null : ms;
+}
 import { SkeletonModule } from 'primeng/skeleton';
 
 type FilterTab = 'all' | TaskStatus;
@@ -26,6 +53,8 @@ export class DashboardComponent implements OnInit {
   protected readonly i18n = inject(TranslationService);
   private readonly taskStore = inject(TaskStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
+
+  @ViewChild('sortDropdown', { read: ElementRef }) private sortDropdownRef?: ElementRef<HTMLElement>;
 
   /** PrimeNG Skeleton for stats + Kanban until API + minimum delay finish. */
   protected readonly showSkeleton = signal(true);
@@ -117,13 +146,13 @@ export class DashboardComponent implements OnInit {
   });
 
   protected readonly todoTasks = computed(() =>
-    this.filteredTasks().filter((t) => t.status === 'todo'),
+    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'todo')),
   );
   protected readonly progressTasks = computed(() =>
-    this.filteredTasks().filter((t) => t.status === 'in_progress'),
+    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'in_progress')),
   );
   protected readonly doneTasks = computed(() =>
-    this.filteredTasks().filter((t) => t.status === 'done'),
+    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'done')),
   );
 
   protected readonly columns = computed(() => [
@@ -169,5 +198,42 @@ export class DashboardComponent implements OnInit {
 
   toggleSort(): void {
     this.sortOpen.update((v) => !v);
+  }
+
+  protected sortOptionLabelKey(key: SortOption): string {
+    return this.sortOptions.find((o) => o.key === key)?.labelKey ?? 'dashboard.sort.priority';
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    if (!this.sortOpen()) return;
+    const host = this.sortDropdownRef?.nativeElement;
+    if (host?.contains(event.target as Node)) return;
+    this.sortOpen.set(false);
+  }
+
+  private sortTaskList(tasks: Task[]): Task[] {
+    const sort = this.activeSort();
+    const copy = [...tasks];
+    if (sort === 'priority') {
+      copy.sort(
+        (a, b) =>
+          (PRIORITY_RANK[a.priority] ?? 99) - (PRIORITY_RANK[b.priority] ?? 99),
+      );
+      return copy;
+    }
+    if (sort === 'dueDate') {
+      copy.sort((a, b) => {
+        const da = taskDueMs(a);
+        const db = taskDueMs(b);
+        if (da == null && db == null) return 0;
+        if (da == null) return 1;
+        if (db == null) return -1;
+        return da - db;
+      });
+      return copy;
+    }
+    copy.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+    return copy;
   }
 }

@@ -118,6 +118,8 @@
     },
     "sort": {
       "label": "Priority",
+      "aria": "Sort tasks by",
+      "menuAria": "Sort order",
       "priority": "Priority",
       "dueDate": "Due Date",
       "title": "Title"
