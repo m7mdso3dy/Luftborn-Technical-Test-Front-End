@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output } from '@angular/core';
+import { Component, inject, OnInit, output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
@@ -47,7 +47,8 @@ export class DashboardLayoutComponent implements OnInit {
     this.teamStore.refresh().subscribe();
   }
 
-  readonly userInitials = input<string>('JD');
+  /** Derived from the logged-in profile (or JWT) in `AuthService`. */
+  protected readonly userInitials = this.auth.displayInitials;
 
   readonly newTask = output<void>();
 
