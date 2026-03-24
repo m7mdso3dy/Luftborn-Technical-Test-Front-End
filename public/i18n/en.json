@@ -49,6 +49,40 @@
       "reject": "Cancel"
     }
   },
+  "teamPage": {
+    "title": "Team",
+    "description": "Manage people on your team. Add members with a name, email, and optional profile photo.",
+    "breadcrumb": {
+      "dashboard": "Dashboard",
+      "team": "Team"
+    },
+    "addUser": "Add user",
+    "dialogTitle": "New team member",
+    "columns": {
+      "avatar": "Avatar",
+      "name": "Name",
+      "email": "Email"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "avatar": "Profile photo"
+    },
+    "errors": {
+      "name": "Enter a name (at least 2 characters).",
+      "emailRequired": "Enter an email address.",
+      "emailInvalid": "Enter a valid email address."
+    },
+    "cancel": "Cancel",
+    "save": "Add"
+  },
+  "uploader": {
+    "choose": "Choose image",
+    "clear": "Remove",
+    "errors": {
+      "tooLarge": "File is too large (max 2 MB)."
+    }
+  },
   "dashboard": {
     "filter": {
       "all": "All",

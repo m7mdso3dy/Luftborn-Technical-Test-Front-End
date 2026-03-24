@@ -148,10 +148,10 @@
       <label for="task-assignee" class="text-sm font-medium text-slate-700">
         {{ 'taskForm.fields.assignee' | tr: i18n.locale() }}
       </label>
-      <p-select
-        inputId="task-assignee"
-        formControlName="assigneeId"
-        [options]="assigneeSelectOptions"
+        <p-select
+          inputId="task-assignee"
+          formControlName="assigneeId"
+          [options]="assigneeSelectOptions()"
         optionLabel="label"
         optionValue="value"
         [placeholder]="'taskForm.placeholders.select' | tr: i18n.locale()"

@@ -15,6 +15,9 @@ const loadDashboardPage = () =>
 const loadTasksPage = () =>
   import('@features/tasks/tasks-page.component').then((m) => m.TasksPageComponent);
 
+const loadTeamPage = () =>
+  import('@features/team/team-page.component').then((m) => m.TeamPageComponent);
+
 export const routes: Routes = [
   {
     path: '',
@@ -33,7 +36,7 @@ export const routes: Routes = [
           { path: 'tasks', loadComponent: loadTasksPage, data: { title: 'Tasks' } },
           { path: 'calendar', loadComponent: loadShellOutlet },
           { path: 'analytics', loadComponent: loadShellOutlet },
-          { path: 'team', loadComponent: loadShellOutlet },
+          { path: 'team', loadComponent: loadTeamPage, data: { title: 'Team' } },
           { path: 'settings', loadComponent: loadShellOutlet },
         ],
       },

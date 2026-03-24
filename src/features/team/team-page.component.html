@@ -1,0 +1,119 @@
+<div class="team-page flex flex-col gap-6">
+  <p-breadcrumb [model]="breadcrumbItems()" styleClass="border-0 bg-transparent p-0" />
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header class="flex max-w-3xl flex-col gap-1">
+      <h1 class="text-2xl font-semibold text-slate-900">
+        {{ 'teamPage.title' | tr: i18n.locale() }}
+      </h1>
+      <p class="text-sm leading-relaxed text-slate-600">
+        {{ 'teamPage.description' | tr: i18n.locale() }}
+      </p>
+    </header>
+    <p-button type="button" [label]="'teamPage.addUser' | tr: i18n.locale()" (onClick)="openAdd()" />
+  </div>
+
+  <p-table
+    [value]="users()"
+    dataKey="id"
+    [paginator]="true"
+    [rows]="10"
+    [showFirstLastIcon]="true"
+    showGridlines
+    [tableStyle]="{ 'min-width': tableMinWidth }"
+    [tableStyleClass]="'team-table w-full'"
+  >
+    <ng-template #header>
+      <tr>
+        <th scope="col">{{ 'teamPage.columns.avatar' | tr: i18n.locale() }}</th>
+        <th scope="col">{{ 'teamPage.columns.name' | tr: i18n.locale() }}</th>
+        <th scope="col">{{ 'teamPage.columns.email' | tr: i18n.locale() }}</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-u>
+      <tr>
+        <td>
+          @if (u.avatar) {
+            <img [src]="u.avatar" [alt]="u.name" class="h-12 w-12 rounded-full object-cover" />
+          } @else {
+            <span
+              class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600"
+              aria-hidden="true"
+            >
+              {{ u.name.charAt(0).toUpperCase() }}
+            </span>
+          }
+        </td>
+        <td [attr.title]="u.name">{{ u.name }}</td>
+        <td [attr.title]="u.email">{{ u.email }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="addVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [dismissableMask]="true"
+    [style]="{ width: 'min(28rem, 94vw)' }"
+    [header]="'teamPage.dialogTitle' | tr: i18n.locale()"
+  >
+    <form [formGroup]="addForm" class="flex flex-col gap-4" (ngSubmit)="saveUser()">
+      <div class="flex flex-col gap-1">
+        <label for="team-user-name" class="text-sm font-medium text-slate-700">
+          {{ 'teamPage.fields.name' | tr: i18n.locale() }}
+        </label>
+        <input
+          id="team-user-name"
+          pInputText
+          type="text"
+          formControlName="name"
+          class="w-full"
+          autocomplete="name"
+        />
+        @if (addForm.controls.name.invalid && addForm.controls.name.touched) {
+          <small class="text-red-600">{{ 'teamPage.errors.name' | tr: i18n.locale() }}</small>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="team-user-email" class="text-sm font-medium text-slate-700">
+          {{ 'teamPage.fields.email' | tr: i18n.locale() }}
+        </label>
+        <input
+          id="team-user-email"
+          pInputText
+          type="email"
+          formControlName="email"
+          class="w-full"
+          autocomplete="email"
+        />
+        @if (addForm.controls.email.errors?.['required'] && addForm.controls.email.touched) {
+          <small class="text-red-600">{{ 'teamPage.errors.emailRequired' | tr: i18n.locale() }}</small>
+        }
+        @if (addForm.controls.email.errors?.['email'] && addForm.controls.email.touched) {
+          <small class="text-red-600">{{ 'teamPage.errors.emailInvalid' | tr: i18n.locale() }}</small>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <span class="text-sm font-medium text-slate-700">
+          {{ 'teamPage.fields.avatar' | tr: i18n.locale() }}
+        </span>
+        <app-uploader-input
+          formControlName="avatar"
+          [chooseLabel]="chooseAvatarLabel()"
+          [clearLabel]="clearAvatarLabel()"
+        />
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button
+        type="button"
+        [label]="'teamPage.cancel' | tr: i18n.locale()"
+        severity="secondary"
+        (onClick)="closeAdd()"
+      />
+      <p-button type="button" [label]="'teamPage.save' | tr: i18n.locale()" (onClick)="saveUser()" />
+    </ng-template>
+  </p-dialog>
+</div>

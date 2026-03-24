@@ -1,0 +1,20 @@
+@reference 'tailwindcss';
+
+.team-page {
+  @apply p-1 sm:p-0;
+}
+
+:host ::ng-deep .team-table :is(th, td) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .team-table td:first-child {
+  white-space: normal;
+}

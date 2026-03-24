@@ -49,6 +49,40 @@
       "reject": "إلغاء"
     }
   },
+  "teamPage": {
+    "title": "الفريق",
+    "description": "إدارة أعضاء الفريق. أضف أعضاء بالاسم والبريد وصورة اختيارية.",
+    "breadcrumb": {
+      "dashboard": "لوحة التحكم",
+      "team": "الفريق"
+    },
+    "addUser": "إضافة مستخدم",
+    "dialogTitle": "عضو جديد",
+    "columns": {
+      "avatar": "الصورة",
+      "name": "الاسم",
+      "email": "البريد"
+    },
+    "fields": {
+      "name": "الاسم",
+      "email": "البريد",
+      "avatar": "صورة الملف"
+    },
+    "errors": {
+      "name": "أدخل اسماً (حرفان على الأقل).",
+      "emailRequired": "أدخل البريد الإلكتروني.",
+      "emailInvalid": "أدخل بريداً صالحاً."
+    },
+    "cancel": "إلغاء",
+    "save": "إضافة"
+  },
+  "uploader": {
+    "choose": "اختر صورة",
+    "clear": "إزالة",
+    "errors": {
+      "tooLarge": "الملف كبير جداً (الحد 2 ميجابايت)."
+    }
+  },
   "dashboard": {
     "filter": {
       "all": "الكل",

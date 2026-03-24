@@ -1,0 +1,5 @@
+@reference 'tailwindcss';
+
+.uploader-input__preview img {
+  display: block;
+}

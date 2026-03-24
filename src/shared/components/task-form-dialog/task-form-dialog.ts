@@ -29,7 +29,7 @@ import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { type Task, type TaskPriority, type TaskStatus } from '../../models/task.types';
 
-import { TASK_ASSIGNEES } from './task-assignees';
+import { TeamStoreService } from '../../services/team-store.service';
 import { computeDueDisplay } from './task-due.helpers';
 import {
   descriptionBlacklistValidator,
@@ -63,15 +63,16 @@ export class TaskFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly i18n = inject(TranslationService);
+  private readonly teamStore = inject(TeamStoreService);
 
   readonly visible = model(false);
   readonly task = input<Task | null>(null);
   readonly saved = output<Task>();
 
-  readonly assigneeSelectOptions = TASK_ASSIGNEES.map((a) => ({
-    label: a.name,
-    value: a.id,
-  }));
+  protected readonly assigneeSelectOptions = computed(() => {
+    void this.i18n.locale();
+    return this.teamStore.users().map((a) => ({ label: a.name, value: a.id }));
+  });
 
   protected readonly dialogHeader = computed(() => {
     void this.i18n.locale();
@@ -154,7 +155,7 @@ export class TaskFormDialogComponent {
     }
     this.submitting.set(true);
     const v = this.form.getRawValue();
-    const assignee = TASK_ASSIGNEES.find((a) => a.id === v.assigneeId)!;
+    const assignee = this.teamStore.getById(v.assigneeId)!;
 
     const dueAt =
       v.dueDate instanceof Date && !Number.isNaN(v.dueDate.getTime())
