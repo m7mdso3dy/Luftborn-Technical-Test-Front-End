@@ -4,11 +4,13 @@ import { provideRouter } from '@angular/router';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 
+import { provideCore } from '@core';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideCore(),
     provideAnimationsAsync(),
     provideRouter(routes),
     providePrimeNG({
