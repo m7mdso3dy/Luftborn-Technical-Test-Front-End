@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, map, of, take, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, take, tap } from 'rxjs';
 
 import { API_BASE } from '@core/api/api.constants';
 import {
@@ -21,19 +21,32 @@ export class TaskStoreService {
 
   readonly tasks = this._tasks.asReadonly();
 
+  /** True while `GET /api/tasks` is in flight. */
+  readonly tasksLoading = signal(false);
+
+  /** Set when the last tasks list request failed. */
+  readonly tasksLoadError = signal(false);
+
   /** Load tasks from `GET /api/tasks`. */
   refresh(): Observable<void> {
+    this.tasksLoading.set(true);
+    this.tasksLoadError.set(false);
     return this.http.get<TasksApiResponse>(`${API_BASE}/tasks`).pipe(
       map((res) =>
         (res.tasks ?? []).map((row) => normalizeTaskFromApi(row as ApiTaskRow)),
       ),
-      tap((tasks) => this._tasks.set(tasks)),
+      tap((tasks) => {
+        this._tasks.set(tasks);
+        this.tasksLoadError.set(false);
+      }),
       map(() => void 0),
       catchError((err) => {
         console.warn('Failed to load tasks', err);
+        this.tasksLoadError.set(true);
         this._tasks.set([]);
         return of(void 0);
       }),
+      finalize(() => this.tasksLoading.set(false)),
     );
   }
 

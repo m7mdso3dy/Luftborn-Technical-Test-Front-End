@@ -10,10 +10,28 @@
     </p>
   </header>
 
+  @if (taskStore.tasksLoadError()) {
+    <div
+      class="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      role="alert"
+    >
+      <p class="text-sm text-red-800">{{ 'tasksPage.loadError' | tr: i18n.locale() }}</p>
+      <p-button
+        type="button"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        [label]="'tasksPage.retry' | tr: i18n.locale()"
+        (onClick)="reloadTasks()"
+      />
+    </div>
+  }
+
   <p-table
     class="tasks-table-wrap"
     [value]="tasks()"
     dataKey="id"
+    [loading]="taskStore.tasksLoading()"
     [paginator]="true"
     [rows]="10"
     [showFirstLastIcon]="true"
@@ -59,6 +77,13 @@
               (onClick)="confirmDelete(t)"
             />
           </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="!text-center text-sm text-slate-500">
+          {{ 'tasksPage.empty' | tr: i18n.locale() }}
         </td>
       </tr>
     </ng-template>

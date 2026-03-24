@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { TaskFormCoordinatorService, TaskStoreService } from '@shared';
 import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -12,19 +12,28 @@ import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-tasks-page',
   standalone: true,
-  imports: [TableModule, BreadcrumbModule, ButtonModule, ConfirmDialogModule, TranslatePipe],
+  imports: [TableModule, BreadcrumbModule, ButtonModule, ConfirmDialogModule, TranslatePipe, PrimeTemplate],
   providers: [ConfirmationService],
   templateUrl: './tasks-page.component.html',
   styleUrl: './tasks-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TasksPageComponent {
+export class TasksPageComponent implements OnInit {
   protected readonly i18n = inject(TranslationService);
-  private readonly taskStore = inject(TaskStoreService);
+  protected readonly taskStore = inject(TaskStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly confirmation = inject(ConfirmationService);
 
   protected readonly tasks = this.taskStore.tasks;
+
+  ngOnInit(): void {
+    this.reloadTasks();
+  }
+
+  /** Fetches the tasks list from `GET /api/tasks` (via `TaskStoreService`). */
+  protected reloadTasks(): void {
+    this.taskStore.refresh().subscribe();
+  }
 
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     void this.i18n.locale();

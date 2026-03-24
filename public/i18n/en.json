@@ -66,7 +66,10 @@
       "message": "Are you sure you want to delete \"{title}\"? This cannot be undone.",
       "accept": "Delete",
       "reject": "Cancel"
-    }
+    },
+    "empty": "No tasks returned from the server.",
+    "loadError": "Could not load tasks. Check that the API is running and you are signed in.",
+    "retry": "Try again"
   },
   "teamPage": {
     "title": "Team",
