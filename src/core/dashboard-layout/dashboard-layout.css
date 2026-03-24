@@ -1,23 +1,13 @@
+@reference '../../styles.css';
+
 .side-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border-radius: 0.5rem;
-  padding: 0.625rem 0.75rem;
-  color: rgb(51 65 85);
-  text-decoration: none;
-  transition:
-    color 150ms ease,
-    background-color 150ms ease,
-    box-shadow 150ms ease;
+  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-700 no-underline transition-colors duration-150 ease-out;
 }
 
 .side-nav-link:hover:not(.side-nav-active) {
-  background-color: rgb(255 255 255 / 0.7);
+  @apply bg-white/70;
 }
 
 .side-nav-link.side-nav-active {
-  background-color: #007bff;
-  color: #fff;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  @apply bg-[#007bff] text-white shadow-sm;
 }

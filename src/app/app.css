@@ -1,0 +1,5 @@
+@reference '../styles.css';
+
+:host {
+  @apply block min-h-dvh antialiased text-slate-900;
+}
