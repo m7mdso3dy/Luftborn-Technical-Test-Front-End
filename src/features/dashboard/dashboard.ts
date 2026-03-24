@@ -1,6 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
+import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
 import {
   StatisticCardComponent,
   TaskCardComponent,
@@ -8,6 +10,7 @@ import {
   TaskStoreService,
 } from '@shared';
 import { type Statistic, type Task, type TaskStatus } from '@shared/models/task.types';
+import { SkeletonModule } from 'primeng/skeleton';
 
 type FilterTab = 'all' | TaskStatus;
 type SortOption = 'priority' | 'dueDate' | 'title';
@@ -15,14 +18,30 @@ type SortOption = 'priority' | 'dueDate' | 'title';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [StatisticCardComponent, TaskCardComponent, TranslatePipe],
+  imports: [StatisticCardComponent, TaskCardComponent, SkeletonModule, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   protected readonly i18n = inject(TranslationService);
   private readonly taskStore = inject(TaskStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
+
+  /** PrimeNG Skeleton for stats + Kanban until API + minimum delay finish. */
+  protected readonly showSkeleton = signal(true);
+
+  protected readonly statSkeletonSlots = [0, 1, 2, 3] as const;
+  protected readonly kanbanSkeletonCols = [0, 1, 2] as const;
+  protected readonly taskSkeletonSlots = [0, 1, 2] as const;
+
+  ngOnInit(): void {
+    forkJoin({
+      data: this.taskStore.refresh(),
+      minDelay: timer(SKELETON_MIN_DISPLAY_MS),
+    }).subscribe({
+      complete: () => this.showSkeleton.set(false),
+    });
+  }
 
   protected readonly statistics = computed<Statistic[]>(() => {
     const tasks = this.taskStore.tasks();

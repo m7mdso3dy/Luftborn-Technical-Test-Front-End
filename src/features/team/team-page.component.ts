@@ -1,21 +1,24 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   computed,
   inject,
   model,
   signal,
 } from '@angular/core';
-import { take } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { forkJoin, take, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
+import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
 import { TeamStoreService, UploaderInputComponent } from '@shared';
 import { MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 
 @Component({
@@ -27,6 +30,7 @@ import { TableModule } from 'primeng/table';
     ButtonModule,
     DialogModule,
     InputTextModule,
+    SkeletonModule,
     ReactiveFormsModule,
     TranslatePipe,
     UploaderInputComponent,
@@ -36,14 +40,33 @@ import { TableModule } from 'primeng/table';
   styleUrl: './team-page.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeamPageComponent {
+export class TeamPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   protected readonly i18n = inject(TranslationService);
-  private readonly teamStore = inject(TeamStoreService);
+  protected readonly teamStore = inject(TeamStoreService);
 
   protected readonly users = this.teamStore.users;
 
+  /** PrimeNG [Skeleton](https://primeng.org/skeleton) until API + minimum delay finish. */
+  protected readonly showSkeleton = signal(false);
+
+  protected readonly skeletonRows = [0, 1, 2, 3, 4] as const;
+
   readonly addVisible = model(false);
+
+  ngOnInit(): void {
+    this.reloadUsers();
+  }
+
+  protected reloadUsers(): void {
+    this.showSkeleton.set(true);
+    forkJoin({
+      data: this.teamStore.refresh(),
+      minDelay: timer(SKELETON_MIN_DISPLAY_MS),
+    }).subscribe({
+      complete: () => this.showSkeleton.set(false),
+    });
+  }
 
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
     void this.i18n.locale();

@@ -69,7 +69,8 @@
     },
     "empty": "No tasks returned from the server.",
     "loadError": "Could not load tasks. Check that the API is running and you are signed in.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "loadingSkeleton": "Loading tasks"
   },
   "teamPage": {
     "title": "Team",
@@ -96,6 +97,7 @@
       "emailInvalid": "Enter a valid email address.",
       "saveFailed": "Could not save this user. The email or username may already exist."
     },
+    "loadingSkeleton": "Loading team",
     "cancel": "Cancel",
     "save": "Add"
   },
@@ -107,6 +109,7 @@
     }
   },
   "dashboard": {
+    "loadingSkeleton": "Loading dashboard",
     "filter": {
       "all": "All",
       "todo": "To Do",

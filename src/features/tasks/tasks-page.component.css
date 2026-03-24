@@ -19,3 +19,15 @@
 :host ::ng-deep .tasks-table :is(th, td):last-child {
   white-space: normal;
 }
+
+.tasks-skel-table :is(.tasks-skel-th, .tasks-skel-td) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.tasks-skel-table .tasks-skel-td:last-child {
+  white-space: normal;
+}

@@ -44,7 +44,6 @@ export class DashboardLayoutComponent implements OnInit {
   private readonly teamStore = inject(TeamStoreService);
 
   ngOnInit(): void {
-    this.taskStore.refresh().subscribe();
     this.teamStore.refresh().subscribe();
   }
 

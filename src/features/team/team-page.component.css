@@ -18,3 +18,15 @@
 :host ::ng-deep .team-table td:first-child {
   white-space: normal;
 }
+
+.team-skel-table :is(.team-skel-th, .team-skel-td) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.team-skel-table .team-skel-td:first-child {
+  white-space: normal;
+}

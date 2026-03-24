@@ -1,18 +1,29 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
+import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
 import { TaskFormCoordinatorService, TaskStoreService } from '@shared';
 import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
 import { ConfirmationService, MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-tasks-page',
   standalone: true,
-  imports: [TableModule, BreadcrumbModule, ButtonModule, ConfirmDialogModule, TranslatePipe, PrimeTemplate],
+  imports: [
+    TableModule,
+    BreadcrumbModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    SkeletonModule,
+    TranslatePipe,
+    PrimeTemplate,
+  ],
   providers: [ConfirmationService],
   templateUrl: './tasks-page.component.html',
   styleUrl: './tasks-page.component.css',
@@ -26,13 +37,24 @@ export class TasksPageComponent implements OnInit {
 
   protected readonly tasks = this.taskStore.tasks;
 
+  /** PrimeNG [Skeleton](https://primeng.org/skeleton) table until API + minimum delay finish. */
+  protected readonly showSkeleton = signal(false);
+
+  protected readonly skeletonRows = [0, 1, 2, 3, 4] as const;
+
   ngOnInit(): void {
     this.reloadTasks();
   }
 
-  /** Fetches the tasks list from `GET /api/tasks` (via `TaskStoreService`). */
+  /** Fetches tasks and keeps skeleton visible at least `SKELETON_MIN_DISPLAY_MS`. */
   protected reloadTasks(): void {
-    this.taskStore.refresh().subscribe();
+    this.showSkeleton.set(true);
+    forkJoin({
+      data: this.taskStore.refresh(),
+      minDelay: timer(SKELETON_MIN_DISPLAY_MS),
+    }).subscribe({
+      complete: () => this.showSkeleton.set(false),
+    });
   }
 
   protected readonly breadcrumbItems = computed<MenuItem[]>(() => {
