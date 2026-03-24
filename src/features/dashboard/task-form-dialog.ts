@@ -12,7 +12,7 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { PrimeTemplate } from 'primeng/api';
@@ -27,9 +27,7 @@ import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/ta
 import { TASK_ASSIGNEES } from './task-assignees';
 import { computeDueDisplay } from './task-due.helpers';
 import {
-  createTagControl,
   descriptionBlacklistValidator,
-  tagsFormArrayValidator,
   taskFormCrossFieldValidator,
   taskTitleValidator,
 } from './task-form.validators';
@@ -110,9 +108,6 @@ export class TaskFormDialogComponent {
       dueDate: this.fb.control<Date | null>(null),
       assigneeId: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
       completionNote: this.fb.control('', { nonNullable: true }),
-      tags: this.fb.array<FormControl<string>>([createTagControl()], {
-        validators: [tagsFormArrayValidator],
-      }),
     },
     { validators: [taskFormCrossFieldValidator] },
   );
@@ -138,21 +133,6 @@ export class TaskFormDialogComponent {
     });
   }
 
-  get tags(): FormArray<FormControl<string>> {
-    return this.form.controls.tags;
-  }
-
-  addTagRow(): void {
-    this.tags.push(createTagControl(''));
-    this.tags.updateValueAndValidity();
-  }
-
-  removeTagRow(index: number): void {
-    if (this.tags.length <= 1) return;
-    this.tags.removeAt(index);
-    this.tags.updateValueAndValidity();
-  }
-
   close(): void {
     this.visible.set(false);
   }
@@ -166,7 +146,6 @@ export class TaskFormDialogComponent {
     this.submitting.set(true);
     const v = this.form.getRawValue();
     const assignee = TASK_ASSIGNEES.find((a) => a.id === v.assigneeId)!;
-    const tagValues = this.tags.controls.map((c) => c.value.trim()).filter(Boolean);
 
     const dueAt =
       v.dueDate instanceof Date && !Number.isNaN(v.dueDate.getTime())
@@ -191,7 +170,7 @@ export class TaskFormDialogComponent {
       overdueBy,
       completedAt,
       assignee,
-      tags: tagValues,
+      tags: existing?.tags ?? [],
       createdAt: existing?.createdAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -225,10 +204,6 @@ export class TaskFormDialogComponent {
       },
       { emitEvent: false },
     );
-    while (this.tags.length) {
-      this.tags.removeAt(0);
-    }
-    this.tags.push(createTagControl(''));
 
     if (task) {
       this.form.patchValue(
@@ -243,18 +218,10 @@ export class TaskFormDialogComponent {
         },
         { emitEvent: false },
       );
-      while (this.tags.length) {
-        this.tags.removeAt(0);
-      }
-      const list = task.tags.length ? task.tags : [''];
-      for (const t of list) {
-        this.tags.push(createTagControl(t));
-      }
     } else {
       this.form.patchValue({ status: 'todo', priority: 'medium' }, { emitEvent: false });
     }
 
-    this.tags.updateValueAndValidity({ emitEvent: false });
     this.form.updateValueAndValidity({ emitEvent: false });
     this.resetTouchState();
   }

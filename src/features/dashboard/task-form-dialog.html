@@ -162,52 +162,6 @@
         <small class="text-red-600">{{ 'taskForm.errors.assigneeRequired' | tr: i18n.locale() }}</small>
       }
     </div>
-
-    <!-- Tags (dynamic FormArray) -->
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-sm font-medium text-slate-700">{{ 'taskForm.fields.tags' | tr: i18n.locale() }}</span>
-        <p-button
-          type="button"
-          [label]="'taskForm.actions.addTag' | tr: i18n.locale()"
-          severity="secondary"
-          size="small"
-          (onClick)="addTagRow()"
-        />
-      </div>
-      @for (ctrl of tags.controls; track $index) {
-        <div class="flex items-start gap-2">
-          <input
-            pInputText
-            type="text"
-            class="min-w-0 flex-1"
-            [formControl]="ctrl"
-            [invalid]="ctrl.invalid && (ctrl.dirty || ctrl.touched)"
-          />
-          <p-button
-            type="button"
-            [label]="'taskForm.actions.removeTag' | tr: i18n.locale()"
-            severity="secondary"
-            [outlined]="true"
-            size="small"
-            [disabled]="tags.length <= 1"
-            (onClick)="removeTagRow($index)"
-          />
-        </div>
-      }
-      @if (tags.touched && tags.hasError('tagsMin')) {
-        <small class="text-red-600">{{ 'taskForm.errors.tagsMin' | tr: i18n.locale() }}</small>
-      }
-      @if (tags.touched && tags.hasError('tagsMax')) {
-        <small class="text-red-600">{{ 'taskForm.errors.tagsMax' | tr: i18n.locale() }}</small>
-      }
-      @if (tags.touched && tags.hasError('tagTooShort')) {
-        <small class="text-red-600">{{ 'taskForm.errors.tagTooShort' | tr: i18n.locale() }}</small>
-      }
-      @if (tags.touched && tags.hasError('tagTooLong')) {
-        <small class="text-red-600">{{ 'taskForm.errors.tagTooLong' | tr: i18n.locale() }}</small>
-      }
-    </div>
   </form>
 
   <ng-template pTemplate="footer">
