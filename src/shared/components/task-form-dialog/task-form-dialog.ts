@@ -22,7 +22,7 @@ import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
-import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
+import { type Task, type TaskPriority, type TaskStatus } from '../../models/task.types';
 
 import { TASK_ASSIGNEES } from './task-assignees';
 import { computeDueDisplay } from './task-due.helpers';

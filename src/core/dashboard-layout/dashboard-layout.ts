@@ -2,7 +2,12 @@ import { Component, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
-import { TaskModalBridgeService } from '@shared';
+import {
+  TaskFormCoordinatorService,
+  TaskFormDialogComponent,
+  TaskStoreService,
+} from '@shared';
+import { type Task } from '@shared/models/task.types';
 
 export type DashboardSideNavIcon =
   | 'dashboard'
@@ -21,7 +26,7 @@ export interface DashboardSideNavItem {
 
 @Component({
   selector: 'dashboard-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe, TaskFormDialogComponent],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.css',
   host: {
@@ -30,7 +35,8 @@ export interface DashboardSideNavItem {
 })
 export class DashboardLayoutComponent {
   protected readonly i18n = inject(TranslationService);
-  private readonly taskModalBridge = inject(TaskModalBridgeService);
+  protected readonly taskForm = inject(TaskFormCoordinatorService);
+  private readonly taskStore = inject(TaskStoreService);
 
   readonly userInitials = input<string>('JD');
 
@@ -60,7 +66,11 @@ export class DashboardLayoutComponent {
   }
 
   protected onNewTask(): void {
-    this.taskModalBridge.requestNewTask();
+    this.taskForm.openCreate();
     this.newTask.emit();
+  }
+
+  protected onTaskFormSaved(task: Task): void {
+    this.taskStore.upsert(task);
   }
 }

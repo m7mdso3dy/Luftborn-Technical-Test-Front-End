@@ -167,4 +167,11 @@
       <router-outlet />
     </main>
   </div>
+
+  <app-task-form-dialog
+    [visible]="taskForm.taskFormVisible()"
+    (visibleChange)="taskForm.taskFormVisible.set($event)"
+    [task]="taskForm.editingTask()"
+    (saved)="onTaskFormSaved($event)"
+  />
 </div>

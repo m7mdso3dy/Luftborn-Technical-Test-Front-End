@@ -1,4 +1,4 @@
-import { type TaskStatus } from '@shared/models/task.types';
+import { type TaskStatus } from '../../models/task.types';
 
 function startOfDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());

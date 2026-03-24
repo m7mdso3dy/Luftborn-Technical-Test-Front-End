@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { type TaskStatus } from '@shared/models/task.types';
+import { type TaskStatus } from '../../models/task.types';
 
 /** Rejects titles that are empty after trim or contain angle brackets. */
 export const taskTitleValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {

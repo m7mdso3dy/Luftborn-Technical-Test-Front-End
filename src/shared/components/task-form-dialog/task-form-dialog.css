@@ -1,4 +1,4 @@
-@reference '../../styles.css';
+@reference '../../../styles.css';
 
 :host ::ng-deep .task-form-dialog .p-dialog-content {
   @apply pb-2;

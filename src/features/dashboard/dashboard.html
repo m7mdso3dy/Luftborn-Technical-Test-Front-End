@@ -1,11 +1,4 @@
 <section aria-label="Dashboard">
-  <app-task-form-dialog
-    [visible]="taskFormOpen()"
-    (visibleChange)="taskFormOpen.set($event)"
-    [task]="editingTask()"
-    (saved)="onTaskSaved($event)"
-  />
-
   <!-- Statistics -->
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
     @for (stat of statistics(); track stat.id) {

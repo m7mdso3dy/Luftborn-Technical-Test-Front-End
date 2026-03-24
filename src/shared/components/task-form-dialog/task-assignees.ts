@@ -1,4 +1,4 @@
-import { type Assignee } from '@shared/models/task.types';
+import { type Assignee } from '../../models/task.types';
 
 export const TASK_ASSIGNEES: readonly Assignee[] = [
   { id: 'a1', name: 'Sarah', avatar: '', email: 'sarah@example.com' },

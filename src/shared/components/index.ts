@@ -1,2 +1,3 @@
 export { StatisticCardComponent } from './statistic-card/statistic-card';
 export { TaskCardComponent } from './task-card/task-card';
+export { TaskFormDialogComponent } from './task-form-dialog/task-form-dialog';
