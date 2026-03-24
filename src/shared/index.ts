@@ -1,5 +1,4 @@
 export * from './components';
-export * from './directives';
 export * from './pipes';
 export * from './models';
 export { TaskFormCoordinatorService } from './services/task-form-coordinator.service';

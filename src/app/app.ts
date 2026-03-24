@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('luftborn-test');
+  protected readonly title = signal('Task Management System');
 }
