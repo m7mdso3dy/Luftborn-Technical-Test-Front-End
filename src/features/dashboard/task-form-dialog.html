@@ -1,0 +1,228 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(36rem, 94vw)' }"
+  [header]="dialogHeader()"
+  [dismissableMask]="true"
+  styleClass="task-form-dialog"
+>
+  <form [formGroup]="form" class="flex flex-col gap-4" (ngSubmit)="submit()">
+    <!-- Title -->
+    <div class="flex flex-col gap-1">
+      <label for="task-title" class="text-sm font-medium text-slate-700">
+        {{ 'taskForm.fields.title' | tr: i18n.locale() }}
+      </label>
+      <input
+        id="task-title"
+        pInputText
+        type="text"
+        formControlName="title"
+        class="w-full"
+        [invalid]="form.controls.title.invalid && form.controls.title.touched"
+        autocomplete="off"
+      />
+      @if (showError('title', 'required') || showError('title', 'titleRequired')) {
+        <small class="text-red-600">{{ 'taskForm.errors.titleRequired' | tr: i18n.locale() }}</small>
+      }
+      @if (showError('title', 'minlength')) {
+        <small class="text-red-600">{{ 'taskForm.errors.titleMinLength' | tr: i18n.locale() }}</small>
+      }
+      @if (showError('title', 'titleInvalidChars')) {
+        <small class="text-red-600">{{ 'taskForm.errors.titleInvalidChars' | tr: i18n.locale() }}</small>
+      }
+    </div>
+
+    <!-- Description -->
+    <div class="flex flex-col gap-1">
+      <label for="task-desc" class="text-sm font-medium text-slate-700">
+        {{ 'taskForm.fields.description' | tr: i18n.locale() }}
+      </label>
+      <textarea
+        id="task-desc"
+        pTextarea
+        formControlName="description"
+        rows="4"
+        class="w-full"
+        [invalid]="form.controls.description.invalid && form.controls.description.touched"
+      ></textarea>
+      @if (showError('description', 'required')) {
+        <small class="text-red-600">{{ 'taskForm.errors.descriptionRequired' | tr: i18n.locale() }}</small>
+      }
+      @if (showError('description', 'minlength')) {
+        <small class="text-red-600">{{ 'taskForm.errors.descriptionMinLength' | tr: i18n.locale() }}</small>
+      }
+      @if (showError('description', 'descriptionForbidden')) {
+        <small class="text-red-600">{{ 'taskForm.errors.descriptionForbidden' | tr: i18n.locale() }}</small>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <!-- Priority -->
+      <div class="flex flex-col gap-1">
+        <label for="task-priority" class="text-sm font-medium text-slate-700">
+          {{ 'taskForm.fields.priority' | tr: i18n.locale() }}
+        </label>
+        <p-select
+          inputId="task-priority"
+          formControlName="priority"
+          [options]="prioritySelectOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'taskForm.placeholders.select' | tr: i18n.locale()"
+          class="w-full"
+          [invalid]="form.controls.priority.invalid && form.controls.priority.touched"
+        />
+        @if (showError('priority', 'required')) {
+          <small class="text-red-600">{{ 'taskForm.errors.priorityRequired' | tr: i18n.locale() }}</small>
+        }
+      </div>
+
+      <!-- Status -->
+      <div class="flex flex-col gap-1">
+        <label for="task-status" class="text-sm font-medium text-slate-700">
+          {{ 'taskForm.fields.status' | tr: i18n.locale() }}
+        </label>
+        <p-select
+          inputId="task-status"
+          formControlName="status"
+          [options]="statusSelectOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'taskForm.placeholders.select' | tr: i18n.locale()"
+          class="w-full"
+          [invalid]="form.controls.status.invalid && form.controls.status.touched"
+        />
+        @if (showError('status', 'required')) {
+          <small class="text-red-600">{{ 'taskForm.errors.statusRequired' | tr: i18n.locale() }}</small>
+        }
+      </div>
+    </div>
+
+    <!-- Due date (open statuses) -->
+    @if (form.controls.status.value === 'todo' || form.controls.status.value === 'in_progress') {
+      <div class="flex flex-col gap-1">
+        <label for="task-due" class="text-sm font-medium text-slate-700">
+          {{ 'taskForm.fields.dueDate' | tr: i18n.locale() }}
+        </label>
+        <p-datepicker
+          inputId="task-due"
+          formControlName="dueDate"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          class="w-full"
+          [invalid]="
+            (form.controls.dueDate.invalid && form.controls.dueDate.touched) || showGroupError('dueDateRequired')
+          "
+        />
+        @if (showGroupError('dueDateRequired')) {
+          <small class="text-red-600">{{ 'taskForm.errors.dueDateRequired' | tr: i18n.locale() }}</small>
+        }
+      </div>
+    }
+
+    <!-- Completion note (done) -->
+    @if (form.controls.status.value === 'done') {
+      <div class="flex flex-col gap-1">
+        <label for="task-completion" class="text-sm font-medium text-slate-700">
+          {{ 'taskForm.fields.completionNote' | tr: i18n.locale() }}
+        </label>
+        <input
+          id="task-completion"
+          pInputText
+          type="text"
+          formControlName="completionNote"
+          class="w-full"
+          [invalid]="form.controls.completionNote.invalid && form.controls.completionNote.touched"
+        />
+        @if (showGroupError('completionRequired')) {
+          <small class="text-red-600">{{ 'taskForm.errors.completionRequired' | tr: i18n.locale() }}</small>
+        }
+      </div>
+    }
+
+    <!-- Assignee -->
+    <div class="flex flex-col gap-1">
+      <label for="task-assignee" class="text-sm font-medium text-slate-700">
+        {{ 'taskForm.fields.assignee' | tr: i18n.locale() }}
+      </label>
+      <p-select
+        inputId="task-assignee"
+        formControlName="assigneeId"
+        [options]="assigneeSelectOptions"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="'taskForm.placeholders.select' | tr: i18n.locale()"
+        class="w-full"
+        [invalid]="form.controls.assigneeId.invalid && form.controls.assigneeId.touched"
+      />
+      @if (showError('assigneeId', 'required')) {
+        <small class="text-red-600">{{ 'taskForm.errors.assigneeRequired' | tr: i18n.locale() }}</small>
+      }
+    </div>
+
+    <!-- Tags (dynamic FormArray) -->
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-sm font-medium text-slate-700">{{ 'taskForm.fields.tags' | tr: i18n.locale() }}</span>
+        <p-button
+          type="button"
+          [label]="'taskForm.actions.addTag' | tr: i18n.locale()"
+          severity="secondary"
+          size="small"
+          (onClick)="addTagRow()"
+        />
+      </div>
+      @for (ctrl of tags.controls; track $index) {
+        <div class="flex items-start gap-2">
+          <input
+            pInputText
+            type="text"
+            class="min-w-0 flex-1"
+            [formControl]="ctrl"
+            [invalid]="ctrl.invalid && (ctrl.dirty || ctrl.touched)"
+          />
+          <p-button
+            type="button"
+            [label]="'taskForm.actions.removeTag' | tr: i18n.locale()"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            [disabled]="tags.length <= 1"
+            (onClick)="removeTagRow($index)"
+          />
+        </div>
+      }
+      @if (tags.touched && tags.hasError('tagsMin')) {
+        <small class="text-red-600">{{ 'taskForm.errors.tagsMin' | tr: i18n.locale() }}</small>
+      }
+      @if (tags.touched && tags.hasError('tagsMax')) {
+        <small class="text-red-600">{{ 'taskForm.errors.tagsMax' | tr: i18n.locale() }}</small>
+      }
+      @if (tags.touched && tags.hasError('tagTooShort')) {
+        <small class="text-red-600">{{ 'taskForm.errors.tagTooShort' | tr: i18n.locale() }}</small>
+      }
+      @if (tags.touched && tags.hasError('tagTooLong')) {
+        <small class="text-red-600">{{ 'taskForm.errors.tagTooLong' | tr: i18n.locale() }}</small>
+      }
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      type="button"
+      [label]="'taskForm.actions.cancel' | tr: i18n.locale()"
+      severity="secondary"
+      (onClick)="close()"
+    />
+    <p-button
+      type="button"
+      [label]="'taskForm.actions.save' | tr: i18n.locale()"
+      (onClick)="submit()"
+      [disabled]="submitting()"
+      [loading]="submitting()"
+    />
+  </ng-template>
+</p-dialog>

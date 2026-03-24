@@ -41,5 +41,55 @@
       "done": "Done"
     },
     "empty": "No tasks here"
+  },
+  "taskForm": {
+    "titleCreate": "New task",
+    "titleEdit": "Edit task",
+    "placeholders": {
+      "select": "Select…"
+    },
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "priority": "Priority",
+      "status": "Status",
+      "dueDate": "Due date",
+      "completionNote": "Completion note",
+      "assignee": "Assignee",
+      "tags": "Tags / categories"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "addTag": "Add tag",
+      "removeTag": "Remove"
+    },
+    "errors": {
+      "titleRequired": "Enter a title.",
+      "titleMinLength": "Title must be at least 3 characters.",
+      "titleInvalidChars": "Title cannot contain < or >.",
+      "descriptionRequired": "Enter a description.",
+      "descriptionMinLength": "Description must be at least 10 characters.",
+      "descriptionForbidden": "Description contains blocked placeholder text.",
+      "priorityRequired": "Choose a priority.",
+      "statusRequired": "Choose a status.",
+      "dueDateRequired": "Due date is required for this status.",
+      "completionRequired": "Enter how or when this was completed.",
+      "assigneeRequired": "Choose an assignee.",
+      "tagsMin": "Add at least one tag.",
+      "tagsMax": "Too many tags (max 8).",
+      "tagTooShort": "Each tag must be at least 2 characters.",
+      "tagTooLong": "A tag is too long (max 40 characters)."
+    }
   }
 }

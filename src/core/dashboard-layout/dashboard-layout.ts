@@ -2,6 +2,7 @@ import { Component, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
+import { TaskModalBridgeService } from '@shared';
 
 export type DashboardSideNavIcon =
   | 'dashboard'
@@ -29,6 +30,7 @@ export interface DashboardSideNavItem {
 })
 export class DashboardLayoutComponent {
   protected readonly i18n = inject(TranslationService);
+  private readonly taskModalBridge = inject(TaskModalBridgeService);
 
   readonly userInitials = input<string>('JD');
 
@@ -58,6 +60,7 @@ export class DashboardLayoutComponent {
   }
 
   protected onNewTask(): void {
+    this.taskModalBridge.requestNewTask();
     this.newTask.emit();
   }
 }

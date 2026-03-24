@@ -31,6 +31,8 @@ export interface Task {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
+  /** ISO 8601 date (date-only or full); used for overdue / display logic when set. */
+  dueAt?: string;
   dueDate: string;
   isOverdue: boolean;
   overdueBy?: string;

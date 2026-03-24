@@ -41,5 +41,55 @@
       "done": "مكتمل"
     },
     "empty": "لا توجد مهام هنا"
+  },
+  "taskForm": {
+    "titleCreate": "مهمة جديدة",
+    "titleEdit": "تعديل المهمة",
+    "placeholders": {
+      "select": "اختر…"
+    },
+    "fields": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "priority": "الأولوية",
+      "status": "الحالة",
+      "dueDate": "تاريخ الاستحقاق",
+      "completionNote": "ملاحظة الإكمال",
+      "assignee": "المكلف",
+      "tags": "الوسوم / التصنيف"
+    },
+    "priority": {
+      "high": "عالية",
+      "medium": "متوسطة",
+      "low": "منخفضة"
+    },
+    "status": {
+      "todo": "قيد الانتظار",
+      "inProgress": "قيد التنفيذ",
+      "done": "مكتمل"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "addTag": "إضافة وسم",
+      "removeTag": "إزالة"
+    },
+    "errors": {
+      "titleRequired": "أدخل عنواناً.",
+      "titleMinLength": "العنوان يجب أن يكون 3 أحرف على الأقل.",
+      "titleInvalidChars": "العنوان لا يمكن أن يحتوي على < أو >.",
+      "descriptionRequired": "أدخل وصفاً.",
+      "descriptionMinLength": "الوصف يجب أن يكون 10 أحرف على الأقل.",
+      "descriptionForbidden": "الوصف يحتوي على نص غير مسموح.",
+      "priorityRequired": "اختر الأولوية.",
+      "statusRequired": "اختر الحالة.",
+      "dueDateRequired": "تاريخ الاستحقاق مطلوب لهذه الحالة.",
+      "completionRequired": "اذكر كيف أو متى اكتملت المهمة.",
+      "assigneeRequired": "اختر المكلف.",
+      "tagsMin": "أضف وسمًا واحدًا على الأقل.",
+      "tagsMax": "عدد الوسوم كبير (الحد 8).",
+      "tagTooShort": "كل وسم يجب أن يكون حرفين على الأقل.",
+      "tagTooLong": "أحد الوسوم طويل جداً (الحد 40 حرفاً)."
+    }
   }
 }

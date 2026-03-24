@@ -11,6 +11,8 @@ export class TaskCardComponent {
   readonly task = input.required<Task>();
 
   readonly menuClick = output<Task>();
+  /** Emitted when the card surface is activated (edit flow). */
+  readonly cardClick = output<Task>();
 
   priorityBadge(priority: TaskPriority): { label: string; classes: string; barClass: string } {
     const map: Record<TaskPriority, { label: string; classes: string; barClass: string }> = {
@@ -41,5 +43,9 @@ export class TaskCardComponent {
   onMenuClick(event: Event): void {
     event.stopPropagation();
     this.menuClick.emit(this.task());
+  }
+
+  onCardClick(): void {
+    this.cardClick.emit(this.task());
   }
 }

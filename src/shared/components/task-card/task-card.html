@@ -1,4 +1,12 @@
-<div class="task-card" [class.task-card--overdue]="task().isOverdue">
+<div
+  class="task-card"
+  [class.task-card--overdue]="task().isOverdue"
+  role="button"
+  tabindex="0"
+  (click)="onCardClick()"
+  (keydown.enter)="onCardClick()"
+  (keydown.space)="$event.preventDefault(); onCardClick()"
+>
   <div class="flex items-start justify-between gap-2">
     <span
       class="inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-bold tracking-wider"

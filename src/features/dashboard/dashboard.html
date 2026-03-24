@@ -1,4 +1,10 @@
 <section aria-label="Dashboard">
+  <app-task-form-dialog
+    [visible]="taskFormOpen()"
+    (visibleChange)="taskFormOpen.set($event)"
+    [task]="editingTask()"
+    (saved)="onTaskSaved($event)"
+  />
 
   <!-- Statistics -->
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -57,6 +63,7 @@
       <button
         type="button"
         class="flex items-center gap-1.5 rounded-lg bg-[#007bff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0069d9]"
+        (click)="openCreateTask()"
       >
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
@@ -86,7 +93,7 @@
         <!-- Cards -->
         <div class="space-y-3">
           @for (task of col.tasks; track task.id) {
-            <task-card [task]="task" />
+            <task-card [task]="task" (cardClick)="openEditTask($event)" />
           } @empty {
             <div class="rounded-xl border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
               {{ 'dashboard.empty' | tr: i18n.locale() }}
