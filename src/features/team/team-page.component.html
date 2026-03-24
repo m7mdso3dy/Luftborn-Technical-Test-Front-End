@@ -105,6 +105,11 @@
           [clearLabel]="clearAvatarLabel()"
         />
       </div>
+      @if (saveError()) {
+        <p class="text-sm text-red-600" role="alert">
+          {{ 'teamPage.errors.saveFailed' | tr: i18n.locale() }}
+        </p>
+      }
     </form>
     <ng-template pTemplate="footer">
       <p-button

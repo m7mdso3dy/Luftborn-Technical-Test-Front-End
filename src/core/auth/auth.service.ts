@@ -1,9 +1,20 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { Observable, catchError, map, of, tap } from 'rxjs';
+
+import { API_BASE } from '../api/api.constants';
 
 const STORAGE_KEY = 'app.auth.token';
 
+interface LoginResponse {
+  accessToken?: string;
+  tokenType?: string;
+  user?: unknown;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly http = inject(HttpClient);
   private readonly tokenSignal = signal<string | null>(readStoredToken());
 
   /** Present when the user has a stored session token. */
@@ -11,28 +22,28 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => !!this.tokenSignal());
 
-  /** Returns the raw token for guards, interceptors, or API calls. */
   getToken(): string | null {
     return this.tokenSignal();
   }
 
-  /**
-   * Demo login: any non-empty username and password issues a token.
-   * Replace with a real API call in production.
-   */
-  login(username: string, password: string): boolean {
-    const u = username.trim();
-    if (!u.length || !password.length) {
-      return false;
-    }
-    const token = encodeDemoToken(u);
-    try {
-      localStorage.setItem(STORAGE_KEY, token);
-    } catch {
-      /* private mode / quota */
-    }
-    this.tokenSignal.set(token);
-    return true;
+  /** Calls `POST /api/auth/login`; persists JWT on success. */
+  login(username: string, password: string): Observable<boolean> {
+    const body = { username: username.trim(), password };
+    return this.http.post<LoginResponse>(`${API_BASE}/auth/login`, body).pipe(
+      tap((res) => {
+        const t = res?.accessToken;
+        if (t) {
+          try {
+            localStorage.setItem(STORAGE_KEY, t);
+          } catch {
+            /* ignore */
+          }
+          this.tokenSignal.set(t);
+        }
+      }),
+      map((res) => !!res?.accessToken),
+      catchError(() => of(false)),
+    );
   }
 
   logout(): void {
@@ -51,10 +62,4 @@ function readStoredToken(): string | null {
   } catch {
     return null;
   }
-}
-
-/** Opaque demo token (not a real JWT). */
-function encodeDemoToken(username: string): string {
-  const payload = JSON.stringify({ sub: username, ts: Date.now() });
-  return typeof btoa === 'function' ? btoa(payload) : payload;
 }

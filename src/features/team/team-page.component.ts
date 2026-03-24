@@ -4,12 +4,13 @@ import {
   computed,
   inject,
   model,
+  signal,
 } from '@angular/core';
+import { take } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { TeamStoreService, UploaderInputComponent } from '@shared';
-import { type Assignee } from '@shared/models/task.types';
 import { MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
@@ -54,6 +55,8 @@ export class TeamPageComponent {
 
   protected readonly tableMinWidth = '600px';
 
+  protected readonly saveError = signal(false);
+
   readonly addForm = this.fb.group({
     name: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
     email: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -61,6 +64,7 @@ export class TeamPageComponent {
   });
 
   protected openAdd(): void {
+    this.saveError.set(false);
     this.addForm.reset({ name: '', email: '', avatar: '' });
     this.addForm.markAsUntouched();
     this.addVisible.set(true);
@@ -71,19 +75,23 @@ export class TeamPageComponent {
   }
 
   protected saveUser(): void {
+    this.saveError.set(false);
     this.addForm.markAllAsTouched();
     if (this.addForm.invalid) {
       return;
     }
     const v = this.addForm.getRawValue();
-    const user: Assignee = {
-      id: newUserId(),
-      name: v.name.trim(),
-      email: v.email.trim(),
-      avatar: v.avatar.trim(),
-    };
-    this.teamStore.add(user);
-    this.addVisible.set(false);
+    this.teamStore
+      .addUser({
+        name: v.name.trim(),
+        email: v.email.trim(),
+        avatar: v.avatar.trim(),
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: () => this.addVisible.set(false),
+        error: () => this.saveError.set(true),
+      });
   }
 
   protected chooseAvatarLabel(): string {
@@ -93,8 +101,4 @@ export class TeamPageComponent {
   protected clearAvatarLabel(): string {
     return this.i18n.translate('uploader.clear');
   }
-}
-
-function newUserId(): string {
-  return globalThis.crypto?.randomUUID?.() ?? `u-${Date.now()}`;
 }

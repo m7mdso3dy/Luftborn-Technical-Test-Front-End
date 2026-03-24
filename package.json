@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "concurrently -n API,WEB -c blue,green \"npm run start:server\" \"npm run start:web\"",
+    "start:web": "ng serve",
+    "start:server": "npm run start --prefix server",
+    "server:generate": "npm run generate-data --prefix server",
+    "server:dev": "npm run dev --prefix server",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -29,6 +33,7 @@
     "@angular/cli": "^21.2.3",
     "@angular/compiler-cli": "^21.2.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "concurrently": "^9.2.1",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",

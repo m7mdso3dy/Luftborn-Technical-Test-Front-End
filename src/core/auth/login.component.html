@@ -57,6 +57,8 @@
         class="w-full"
         styleClass="w-full"
         [label]="'auth.actions.signIn' | tr: i18n.locale()"
+        [loading]="loading()"
+        [disabled]="loading()"
       />
     </form>
   </div>

@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, OnInit, output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
@@ -7,6 +7,7 @@ import {
   TaskFormCoordinatorService,
   TaskFormDialogComponent,
   TaskStoreService,
+  TeamStoreService,
 } from '@shared';
 import { type Task } from '@shared/models/task.types';
 
@@ -34,12 +35,18 @@ export interface DashboardSideNavItem {
     class: 'block min-h-screen',
   },
 })
-export class DashboardLayoutComponent {
+export class DashboardLayoutComponent implements OnInit {
   protected readonly i18n = inject(TranslationService);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   protected readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly taskStore = inject(TaskStoreService);
+  private readonly teamStore = inject(TeamStoreService);
+
+  ngOnInit(): void {
+    this.taskStore.refresh().subscribe();
+    this.teamStore.refresh().subscribe();
+  }
 
   readonly userInitials = input<string>('JD');
 

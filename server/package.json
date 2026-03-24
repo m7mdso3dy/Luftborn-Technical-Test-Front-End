@@ -1,0 +1,17 @@
+{
+  "name": "luftborn-test-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple JSON-backed REST API (users, tasks, login) for local development",
+  "main": "src/server.js",
+  "scripts": {
+    "generate-data": "node scripts/generate-data.js",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

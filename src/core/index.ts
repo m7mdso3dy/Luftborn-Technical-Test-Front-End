@@ -1,3 +1,4 @@
+export { API_BASE } from './api/api.constants';
 export { provideCore } from './core.providers';
 export { AuthService } from './auth/auth.service';
 export { authGuard } from './auth/auth.guard';

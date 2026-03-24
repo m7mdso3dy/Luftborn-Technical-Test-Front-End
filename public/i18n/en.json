@@ -90,7 +90,8 @@
     "errors": {
       "name": "Enter a name (at least 2 characters).",
       "emailRequired": "Enter an email address.",
-      "emailInvalid": "Enter a valid email address."
+      "emailInvalid": "Enter a valid email address.",
+      "saveFailed": "Could not save this user. The email or username may already exist."
     },
     "cancel": "Cancel",
     "save": "Add"
