@@ -21,5 +21,25 @@
     "team": "Team",
     "settings": "Settings",
     "newTask": "New Task"
+  },
+  "dashboard": {
+    "filter": {
+      "all": "All",
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "sort": {
+      "label": "Priority",
+      "priority": "Priority",
+      "dueDate": "Due Date",
+      "title": "Title"
+    },
+    "column": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "empty": "No tasks here"
   }
 }

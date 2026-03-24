@@ -9,6 +9,9 @@ const loadDashboardOutlet = () =>
 const loadShellOutlet = () =>
   import('./shell-outlet.component').then((m) => m.ShellOutletComponent);
 
+const loadDashboardPage = () =>
+  import('../features/dashboard/dashboard').then((m) => m.DashboardComponent);
+
 export const routes: Routes = [
   {
     path: '',
@@ -21,7 +24,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            loadComponent: loadShellOutlet,
+            loadComponent: loadDashboardPage,
             data: { title: 'Dashboard' },
           },
           { path: 'tasks', loadComponent: loadShellOutlet },

@@ -1,0 +1,13 @@
+@reference '../../styles.css';
+
+.filter-tab {
+  @apply rounded-md px-3.5 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900;
+}
+
+.filter-tab--active {
+  @apply bg-[#007bff] text-white shadow-sm hover:text-white;
+}
+
+.kanban-column {
+  @apply rounded-2xl bg-slate-50/70 p-4;
+}
