@@ -6,11 +6,30 @@
   "nav": {
     "notifications": "Notifications",
     "changeLanguage": "Language",
+    "logout": "Log out",
     "userAvatar": "User profile",
     "languageEnglish": "English",
     "languageArabic": "Arabic",
     "switchToEnglish": "Switch to English",
     "switchToArabic": "Switch to Arabic"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Enter your username and password to continue."
+    },
+    "fields": {
+      "username": "Username",
+      "password": "Password"
+    },
+    "actions": {
+      "signIn": "Sign in"
+    },
+    "errors": {
+      "username": "Username is required.",
+      "password": "Password is required.",
+      "signInFailed": "Could not sign in. Check your credentials."
+    }
   },
   "sidebar": {
     "mainNav": "Main navigation",

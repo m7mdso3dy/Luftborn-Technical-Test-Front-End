@@ -1,0 +1,7 @@
+@reference 'tailwindcss';
+
+:host ::ng-deep .login-card .p-password,
+:host ::ng-deep .login-card .p-password .p-inputtext,
+:host ::ng-deep .login-card .p-password-input {
+  width: 100%;
+}

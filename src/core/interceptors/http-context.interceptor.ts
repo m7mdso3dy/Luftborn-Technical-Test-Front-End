@@ -1,13 +1,21 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+
+import { AuthService } from '../auth/auth.service';
 
 /**
- * Core HTTP interceptor: extend with auth headers, error mapping, or base URL logic.
+ * Core HTTP interceptor: request id, optional Bearer token when authenticated.
  */
 export const httpContextInterceptor: HttpInterceptorFn = (req, next) => {
-  const withContext = req.clone({
-    setHeaders: {
-      'X-Request-Id': globalThis.crypto?.randomUUID?.() ?? String(Date.now()),
-    },
-  });
-  return next(withContext);
+  const auth = inject(AuthService);
+  const token = auth.getToken();
+
+  const headers: Record<string, string> = {
+    'X-Request-Id': globalThis.crypto?.randomUUID?.() ?? String(Date.now()),
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return next(req.clone({ setHeaders: headers }));
 };

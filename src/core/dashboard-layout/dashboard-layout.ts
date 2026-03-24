@@ -1,6 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
+import { AuthService } from '../auth/auth.service';
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
 import {
   TaskFormCoordinatorService,
@@ -35,6 +36,8 @@ export interface DashboardSideNavItem {
 })
 export class DashboardLayoutComponent {
   protected readonly i18n = inject(TranslationService);
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   protected readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly taskStore = inject(TaskStoreService);
 
@@ -72,5 +75,10 @@ export class DashboardLayoutComponent {
 
   protected onTaskFormSaved(task: Task): void {
     this.taskStore.upsert(task);
+  }
+
+  protected logout(): void {
+    this.auth.logout();
+    void this.router.navigate(['/login']);
   }
 }

@@ -6,11 +6,30 @@
   "nav": {
     "notifications": "الإشعارات",
     "changeLanguage": "اللغة",
+    "logout": "تسجيل الخروج",
     "userAvatar": "الملف الشخصي",
     "languageEnglish": "الإنجليزية",
     "languageArabic": "العربية",
     "switchToEnglish": "التبديل إلى الإنجليزية",
     "switchToArabic": "التبديل إلى العربية"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "أدخل اسم المستخدم وكلمة المرور للمتابعة."
+    },
+    "fields": {
+      "username": "اسم المستخدم",
+      "password": "كلمة المرور"
+    },
+    "actions": {
+      "signIn": "دخول"
+    },
+    "errors": {
+      "username": "اسم المستخدم مطلوب.",
+      "password": "كلمة المرور مطلوبة.",
+      "signInFailed": "تعذر تسجيل الدخول. تحقق من البيانات."
+    }
   },
   "sidebar": {
     "mainNav": "التنقل الرئيسي",

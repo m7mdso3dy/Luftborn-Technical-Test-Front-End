@@ -1,5 +1,11 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from '../core/auth/auth.guard';
+import { guestGuard } from '../core/auth/guest.guard';
+
+const loadLogin = () =>
+  import('../core/auth/login.component').then((m) => m.LoginComponent);
+
 const loadDashboardLayout = () =>
   import('../core/dashboard-layout/dashboard-layout').then((m) => m.DashboardLayoutComponent);
 
@@ -20,7 +26,13 @@ const loadTeamPage = () =>
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: loadLogin,
+    canActivate: [guestGuard],
+  },
+  {
     path: '',
+    canActivate: [authGuard],
     loadComponent: loadDashboardLayout,
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -42,4 +54,5 @@ export const routes: Routes = [
       },
     ],
   },
+  { path: '**', redirectTo: '' },
 ];
