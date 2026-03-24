@@ -13,7 +13,12 @@ import { forkJoin, take, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
-import { TaskCardComponent, TeamStoreService, UploaderInputComponent } from '@shared';
+import {
+  TaskCardComponent,
+  TeamStoreService,
+  UploaderInputComponent,
+  initialsFromDisplayName,
+} from '@shared';
 import { type Assignee, type Task } from '@shared/models/task.types';
 import { MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -170,6 +175,9 @@ export class TeamPageComponent implements OnInit {
         error: () => this.saveError.set(true),
       });
   }
+
+  /** Up to two letters when no avatar image (shared with `task-card`). */
+  protected readonly userInitials = initialsFromDisplayName;
 
   protected chooseAvatarLabel(): string {
     return this.i18n.translate('uploader.choose');

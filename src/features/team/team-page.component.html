@@ -102,9 +102,9 @@
                 } @else {
                   <span
                     class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600"
-                    aria-hidden="true"
+                    [attr.aria-label]="u.name"
                   >
-                    {{ u.name.charAt(0).toUpperCase() }}
+                    {{ userInitials(u.name) }}
                   </span>
                 }
               </td>

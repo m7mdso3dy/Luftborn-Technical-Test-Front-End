@@ -1,6 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import { TranslatePipe, TranslationService } from '@core';
 import { type Task, type TaskPriority } from '../../models/task.types';
+import { initialsFromDisplayName } from '../../utils/name-initials';
 
 /** Emitted when the ⋮ menu button is activated (for anchoring a popup menu). */
 export interface TaskCardMenuToggle {
@@ -44,12 +45,7 @@ export class TaskCardComponent {
   }
 
   get initials(): string {
-    return this.task()
-      .assignee.name.split(' ')
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join('')
-      .toUpperCase();
+    return initialsFromDisplayName(this.task().assignee.name);
   }
 
   get assigneeHandle(): string {
