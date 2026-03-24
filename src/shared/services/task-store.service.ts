@@ -1,6 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, finalize, map, of, take, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  finalize,
+  map,
+  of,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 
 import { API_BASE } from '@core/api/api.constants';
 import {
@@ -8,7 +18,7 @@ import {
   normalizeTaskFromApi,
   taskToApiPayload,
 } from '../utils/task-api.mapper';
-import { type Task } from '../models/task.types';
+import { type Task, type TaskStatus } from '../models/task.types';
 
 interface TasksApiResponse {
   tasks?: unknown[];
@@ -83,5 +93,31 @@ export class TaskStoreService {
         next: () => this._tasks.update((list) => list.filter((t) => t.id !== id)),
         error: (err) => console.warn('Failed to delete task', err),
       });
+  }
+
+  /**
+   * PATCH `/api/tasks/:id/status` then merge the returned task into the store.
+   * On failure, runs `refresh()` to resync with the server, then rethrows.
+   */
+  updateTaskStatus(id: string, status: TaskStatus): Observable<Task> {
+    const url = `${API_BASE}/tasks/${encodeURIComponent(id)}/status`;
+    return this.http.patch<unknown>(url, { status }).pipe(
+      map((row) => normalizeTaskFromApi(row as ApiTaskRow)),
+      tap((task) => {
+        this._tasks.update((list) => {
+          const i = list.findIndex((t) => t.id === task.id);
+          if (i === -1) {
+            return [...list, task];
+          }
+          const next = [...list];
+          next[i] = task;
+          return next;
+        });
+      }),
+      catchError((err) => {
+        console.warn('Failed to update task status', err);
+        return this.refresh().pipe(switchMap(() => throwError(() => err)));
+      }),
+    );
   }
 }

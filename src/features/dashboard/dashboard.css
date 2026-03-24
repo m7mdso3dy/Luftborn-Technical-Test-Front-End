@@ -11,3 +11,19 @@
 .kanban-column {
   @apply rounded-2xl bg-slate-50/70 p-4;
 }
+
+.kanban-drop-list.cdk-drop-list-dragging .kanban-card-drag:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.kanban-card-drag.cdk-drag-preview .task-card {
+  @apply shadow-lg;
+}
+
+.kanban-card-drag .cdk-drag-placeholder {
+  @apply min-h-[4.5rem] rounded-xl border-2 border-dashed border-slate-200 bg-slate-100/50;
+}
+
+.kanban-card-drag.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

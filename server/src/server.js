@@ -88,6 +88,32 @@ function newId(prefix) {
   return `${prefix}-${crypto.randomUUID()}`;
 }
 
+const TASK_STATUSES = ['todo', 'in_progress', 'done'];
+
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/** Aligns overdue flags with status + due date (same rules as the Angular client). */
+function derivedOverdueForTask(task, status) {
+  if (status === 'done') {
+    return { isOverdue: false, overdueBy: undefined };
+  }
+  const dueRaw = task.dueAt || task.dueDate;
+  if (!dueRaw) return { isOverdue: false, overdueBy: undefined };
+  const due = new Date(dueRaw);
+  if (Number.isNaN(due.getTime())) return { isOverdue: false, overdueBy: undefined };
+  const today = startOfDay(new Date());
+  const dueDay = startOfDay(due);
+  const diffDays = Math.round((dueDay.getTime() - today.getTime()) / 86400000);
+  if (diffDays < 0) {
+    const n = -diffDays;
+    const label = `Overdue by ${n} day${n === 1 ? '' : 's'}`;
+    return { isOverdue: true, overdueBy: label };
+  }
+  return { isOverdue: false, overdueBy: undefined };
+}
+
 ensureDataFiles();
 
 let users = loadUsers();
@@ -205,6 +231,38 @@ app.get('/api/tasks/:id', (req, res) => {
   const t = data.tasks.find((x) => x.id === req.params.id);
   if (!t) return res.status(404).json({ message: 'Task not found' });
   res.json(t);
+});
+
+/** PATCH /api/tasks/:id/status { status } — Kanban / status-only updates */
+app.patch('/api/tasks/:id/status', (req, res) => {
+  const status = req.body?.status;
+  if (!TASK_STATUSES.includes(status)) {
+    return res.status(400).json({ message: 'status must be todo, in_progress, or done' });
+  }
+  const data = loadTasksPayload();
+  tasks = data.tasks;
+  meta = data.meta;
+  const i = tasks.findIndex((x) => x.id === req.params.id);
+  if (i === -1) return res.status(404).json({ message: 'Task not found' });
+  const prev = tasks[i];
+  let completedAt = prev.completedAt || '';
+  if (status === 'done') {
+    if (!completedAt) completedAt = new Date().toISOString();
+  } else {
+    completedAt = '';
+  }
+  const { isOverdue, overdueBy } = derivedOverdueForTask(prev, status);
+  const next = {
+    ...prev,
+    status,
+    completedAt,
+    isOverdue,
+    overdueBy,
+    updatedAt: new Date().toISOString(),
+  };
+  tasks[i] = next;
+  saveTasks(tasks, meta);
+  res.json(next);
 });
 
 app.post('/api/tasks', (req, res) => {

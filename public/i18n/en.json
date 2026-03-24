@@ -110,6 +110,7 @@
   },
   "dashboard": {
     "loadingSkeleton": "Loading dashboard",
+    "dragHandle": "Drag to change column",
     "filter": {
       "all": "All",
       "todo": "To Do",

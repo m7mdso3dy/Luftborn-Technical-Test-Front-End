@@ -143,10 +143,9 @@
   </div>
 
   <!-- Kanban board -->
-  <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
-    @for (col of columns(); track col.key) {
+  <div cdkDropListGroup class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+    @for (col of kanbanColumnsMeta; track col.key) {
       <div class="kanban-column">
-        <!-- Column header -->
         <div class="flex items-center justify-between px-1 pb-3">
           <div class="flex items-center gap-2">
             <span class="h-2.5 w-2.5 rounded-full" [class]="col.dotColor"></span>
@@ -155,14 +154,37 @@
             </h2>
           </div>
           <span class="flex h-6 min-w-6 items-center justify-center rounded-full bg-slate-100 px-2 text-xs font-semibold text-slate-500">
-            {{ col.count }}
+            {{ columnTasks(col.key).length }}
           </span>
         </div>
 
-        <!-- Cards -->
-        <div class="space-y-3">
-          @for (task of col.tasks; track task.id) {
-            <task-card [task]="task" (cardClick)="openEditTask($event)" />
+        <div
+          cdkDropList
+          [id]="col.key"
+          [cdkDropListData]="columnTasks(col.key)"
+          (cdkDropListDropped)="onKanbanDrop($event)"
+          class="kanban-drop-list min-h-[120px] space-y-3"
+        >
+          @for (task of columnTasks(col.key); track task.id) {
+            <div cdkDrag [cdkDragData]="task" class="kanban-card-drag flex gap-1.5">
+              <button
+                type="button"
+                cdkDragHandle
+                class="flex w-7 shrink-0 cursor-grab flex-col items-center justify-center self-stretch rounded-lg border border-slate-200/80 bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 active:cursor-grabbing"
+                [attr.aria-label]="'dashboard.dragHandle' | tr: i18n.locale()"
+                (click)="$event.stopPropagation()"
+              >
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="9" cy="8" r="1.25" />
+                  <circle cx="15" cy="8" r="1.25" />
+                  <circle cx="9" cy="12" r="1.25" />
+                  <circle cx="15" cy="12" r="1.25" />
+                  <circle cx="9" cy="16" r="1.25" />
+                  <circle cx="15" cy="16" r="1.25" />
+                </svg>
+              </button>
+              <task-card class="min-w-0 flex-1" [task]="task" (cardClick)="openEditTask($event)" />
+            </div>
           } @empty {
             <div class="rounded-xl border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
               {{ 'dashboard.empty' | tr: i18n.locale() }}

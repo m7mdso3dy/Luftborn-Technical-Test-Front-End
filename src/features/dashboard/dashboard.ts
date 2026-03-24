@@ -1,3 +1,4 @@
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {
   Component,
   ElementRef,
@@ -5,10 +6,11 @@ import {
   OnInit,
   ViewChild,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
-import { forkJoin, timer } from 'rxjs';
+import { forkJoin, take, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
@@ -45,7 +47,7 @@ type SortOption = 'priority' | 'dueDate' | 'title';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [StatisticCardComponent, TaskCardComponent, SkeletonModule, TranslatePipe],
+  imports: [StatisticCardComponent, TaskCardComponent, DragDropModule, SkeletonModule, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -56,12 +58,39 @@ export class DashboardComponent implements OnInit {
 
   @ViewChild('sortDropdown', { read: ElementRef }) private sortDropdownRef?: ElementRef<HTMLElement>;
 
+  /** Writable lists for CDK drag-drop; kept in sync with the store via `effect`. */
+  protected readonly colTodo = signal<Task[]>([]);
+  protected readonly colProgress = signal<Task[]>([]);
+  protected readonly colDone = signal<Task[]>([]);
+
+  protected readonly kanbanColumnsMeta = [
+    { key: 'todo' as const, titleKey: 'dashboard.column.todo', dotColor: 'bg-slate-400' },
+    {
+      key: 'in_progress' as const,
+      titleKey: 'dashboard.column.inProgress',
+      dotColor: 'bg-blue-500',
+    },
+    { key: 'done' as const, titleKey: 'dashboard.column.done', dotColor: 'bg-emerald-500' },
+  ] as const;
+
   /** PrimeNG Skeleton for stats + Kanban until API + minimum delay finish. */
   protected readonly showSkeleton = signal(true);
 
   protected readonly statSkeletonSlots = [0, 1, 2, 3] as const;
   protected readonly kanbanSkeletonCols = [0, 1, 2] as const;
   protected readonly taskSkeletonSlots = [0, 1, 2] as const;
+
+  constructor() {
+    effect(() => {
+      this.taskStore.tasks();
+      this.activeFilter();
+      this.activeSort();
+      const filtered = this.filteredTasks();
+      this.colTodo.set(this.sortTaskList(filtered.filter((t) => t.status === 'todo')));
+      this.colProgress.set(this.sortTaskList(filtered.filter((t) => t.status === 'in_progress')));
+      this.colDone.set(this.sortTaskList(filtered.filter((t) => t.status === 'done')));
+    });
+  }
 
   ngOnInit(): void {
     forkJoin({
@@ -145,39 +174,39 @@ export class DashboardComponent implements OnInit {
     return filter === 'all' ? tasks : tasks.filter((t) => t.status === filter);
   });
 
-  protected readonly todoTasks = computed(() =>
-    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'todo')),
-  );
-  protected readonly progressTasks = computed(() =>
-    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'in_progress')),
-  );
-  protected readonly doneTasks = computed(() =>
-    this.sortTaskList(this.filteredTasks().filter((t) => t.status === 'done')),
-  );
+  protected columnTasks(key: TaskStatus): Task[] {
+    switch (key) {
+      case 'todo':
+        return this.colTodo();
+      case 'in_progress':
+        return this.colProgress();
+      case 'done':
+        return this.colDone();
+    }
+  }
 
-  protected readonly columns = computed(() => [
-    {
-      key: 'todo' as const,
-      titleKey: 'dashboard.column.todo',
-      count: this.todoTasks().length,
-      tasks: this.todoTasks(),
-      dotColor: 'bg-slate-400',
-    },
-    {
-      key: 'in_progress' as const,
-      titleKey: 'dashboard.column.inProgress',
-      count: this.progressTasks().length,
-      tasks: this.progressTasks(),
-      dotColor: 'bg-blue-500',
-    },
-    {
-      key: 'done' as const,
-      titleKey: 'dashboard.column.done',
-      count: this.doneTasks().length,
-      tasks: this.doneTasks(),
-      dotColor: 'bg-emerald-500',
-    },
-  ]);
+  protected onKanbanDrop(event: CdkDragDrop<Task[]>): void {
+    const task = event.item.data as Task | undefined;
+    if (!task) return;
+
+    if (event.previousContainer === event.container) {
+      const data = [...event.container.data];
+      moveItemInArray(data, event.previousIndex, event.currentIndex);
+      this.applyListForStatus(event.container.id as TaskStatus, data);
+      return;
+    }
+
+    const prevStatus = event.previousContainer.id as TaskStatus;
+    const currStatus = event.container.id as TaskStatus;
+
+    const prevData = [...event.previousContainer.data];
+    const currData = [...event.container.data];
+    transferArrayItem(prevData, currData, event.previousIndex, event.currentIndex);
+    this.applyListForStatus(prevStatus, prevData);
+    this.applyListForStatus(currStatus, currData);
+
+    this.taskStore.updateTaskStatus(task.id, currStatus).pipe(take(1)).subscribe();
+  }
 
   openCreateTask(): void {
     this.taskForm.openCreate();
@@ -210,6 +239,20 @@ export class DashboardComponent implements OnInit {
     const host = this.sortDropdownRef?.nativeElement;
     if (host?.contains(event.target as Node)) return;
     this.sortOpen.set(false);
+  }
+
+  private applyListForStatus(status: TaskStatus, data: Task[]): void {
+    switch (status) {
+      case 'todo':
+        this.colTodo.set(data);
+        break;
+      case 'in_progress':
+        this.colProgress.set(data);
+        break;
+      case 'done':
+        this.colDone.set(data);
+        break;
+    }
   }
 
   private sortTaskList(tasks: Task[]): Task[] {

@@ -110,6 +110,7 @@
   },
   "dashboard": {
     "loadingSkeleton": "جاري تحميل لوحة التحكم",
+    "dragHandle": "اسحب لتغيير العمود",
     "filter": {
       "all": "الكل",
       "todo": "قيد الانتظار",
