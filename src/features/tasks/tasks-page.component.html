@@ -1,4 +1,11 @@
 <div class="tasks-page flex flex-col gap-6">
+  <p-menu
+    #taskCardMenu
+    [model]="taskCardMenuModel()"
+    [popup]="true"
+    appendTo="body"
+  />
+
   <p-breadcrumb [model]="breadcrumbItems()" styleClass="tasks-page__breadcrumb border-0 bg-transparent p-0" />
 
   <header class="flex flex-col gap-1">
@@ -29,7 +36,7 @@
 
   @if (showSkeleton()) {
     <div
-      class="tasks-skel-wrap overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm"
+      class="tasks-skel-wrap hidden overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm lg:block"
       [style.min-width]="tableMinWidth"
       role="status"
       [attr.aria-label]="'tasksPage.loadingSkeleton' | tr: i18n.locale()"
@@ -64,67 +71,104 @@
         </tbody>
       </table>
     </div>
-  } @else {
-  <p-table
-    class="tasks-table-wrap"
-    [value]="tasks()"
-    dataKey="id"
-    [paginator]="true"
-    [rows]="10"
-    [showFirstLastIcon]="true"
-    showGridlines
-    [tableStyle]="{ 'min-width': tableMinWidth }"
-    [tableStyleClass]="'tasks-table w-full'"
-  >
-    <ng-template #header>
-      <tr>
-        <th scope="col">{{ 'tasksPage.columns.title' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.description' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.status' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.priority' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.assignee' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.due' | tr: i18n.locale() }}</th>
-        <th scope="col">{{ 'tasksPage.columns.actions' | tr: i18n.locale() }}</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-t>
-      <tr>
-        <td [attr.title]="t.title">{{ t.title }}</td>
-        <td [attr.title]="t.description">{{ t.description }}</td>
-        <td>{{ statusKey(t.status) | tr: i18n.locale() }}</td>
-        <td>{{ priorityKey(t.priority) | tr: i18n.locale() }}</td>
-        <td>{{ t.assignee.name }}</td>
-        <td>{{ t.dueDate }}</td>
-        <td>
-          <div class="flex flex-wrap items-center gap-1">
-            <p-button
-              type="button"
-              [text]="true"
-              severity="secondary"
-              size="small"
-              [label]="'tasksPage.actions.edit' | tr: i18n.locale()"
-              (onClick)="editTask(t)"
-            />
-            <p-button
-              type="button"
-              [text]="true"
-              severity="danger"
-              size="small"
-              [label]="'tasksPage.actions.delete' | tr: i18n.locale()"
-              (onClick)="confirmDelete(t)"
-            />
+    <div
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:hidden"
+      role="status"
+      [attr.aria-label]="'tasksPage.loadingSkeleton' | tr: i18n.locale()"
+    >
+      @for (r of skeletonRows; track r) {
+        <div class="rounded-xl border border-slate-200/70 bg-white p-4 shadow-sm">
+          <p-skeleton width="5rem" height="1.125rem" borderRadius="4px" />
+          <div class="mt-3 space-y-2">
+            <p-skeleton width="100%" height="0.875rem" />
+            <p-skeleton width="88%" height="0.75rem" />
           </div>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="7" class="!text-center text-sm text-slate-500">
-          {{ 'tasksPage.empty' | tr: i18n.locale() }}
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          <div class="mt-3 space-y-2">
+            <p-skeleton width="70%" height="0.75rem" />
+            <p-skeleton width="50%" height="0.75rem" />
+          </div>
+          <div class="mt-4 flex gap-2 border-t border-slate-100 pt-3">
+            <p-skeleton shape="circle" width="1.75rem" height="1.75rem" />
+            <p-skeleton width="5rem" height="0.75rem" />
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    @if (tasks().length === 0) {
+      <p class="rounded-lg border border-dashed border-slate-200 bg-white py-12 text-center text-sm text-slate-500">
+        {{ 'tasksPage.empty' | tr: i18n.locale() }}
+      </p>
+    } @else {
+      <div class="tasks-table-wrap hidden overflow-x-auto lg:block">
+        <p-table
+          [value]="tasks()"
+          dataKey="id"
+          [paginator]="true"
+          [rows]="10"
+          [showFirstLastIcon]="true"
+          showGridlines
+          [tableStyle]="{ 'min-width': tableMinWidth }"
+          [tableStyleClass]="'tasks-table w-full'"
+        >
+          <ng-template #header>
+            <tr>
+              <th scope="col">{{ 'tasksPage.columns.title' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.description' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.status' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.priority' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.assignee' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.due' | tr: i18n.locale() }}</th>
+              <th scope="col">{{ 'tasksPage.columns.actions' | tr: i18n.locale() }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-t>
+            <tr>
+              <td [attr.title]="t.title">{{ t.title }}</td>
+              <td [attr.title]="t.description">{{ t.description }}</td>
+              <td>{{ statusKey(t.status) | tr: i18n.locale() }}</td>
+              <td>{{ priorityKey(t.priority) | tr: i18n.locale() }}</td>
+              <td>{{ t.assignee.name }}</td>
+              <td>{{ t.dueDate }}</td>
+              <td>
+                <div class="flex flex-wrap items-center gap-1">
+                  <p-button
+                    type="button"
+                    [text]="true"
+                    severity="secondary"
+                    size="small"
+                    [label]="'tasksPage.actions.edit' | tr: i18n.locale()"
+                    (onClick)="editTask(t)"
+                  />
+                  <p-button
+                    type="button"
+                    [text]="true"
+                    severity="danger"
+                    size="small"
+                    [label]="'tasksPage.actions.delete' | tr: i18n.locale()"
+                    (onClick)="confirmDelete(t)"
+                  />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="flex flex-col gap-4 lg:hidden">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          @for (t of cardGridTasks(); track t.id) {
+            <task-card [task]="t" (cardClick)="editTask($event)" (menuToggle)="onTaskCardMenuToggle($event)" />
+          }
+        </div>
+        <p-paginator
+          [rows]="cardPageRows"
+          [totalRecords]="tasks().length"
+          [first]="cardPageFirst()"
+          [showFirstLastIcon]="true"
+          (onPageChange)="onTaskCardPageChange($event)"
+        />
+      </div>
+    }
   }
 
   <p-confirmDialog />

@@ -7,3 +7,7 @@
 .task-card--overdue {
   @apply border-red-200/70 bg-red-50/40;
 }
+
+.task-card--team {
+  @apply cursor-default hover:shadow-sm;
+}

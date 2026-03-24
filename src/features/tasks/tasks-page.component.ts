@@ -1,14 +1,30 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
-import { TaskFormCoordinatorService, TaskStoreService } from '@shared';
+import {
+  TaskCardComponent,
+  TaskFormCoordinatorService,
+  TaskStoreService,
+  type TaskCardMenuToggle,
+} from '@shared';
 import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
-import { ConfirmationService, MenuItem, PrimeTemplate } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { Menu, MenuModule } from 'primeng/menu';
+import { PaginatorModule } from 'primeng/paginator';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 
@@ -21,8 +37,10 @@ import { TableModule } from 'primeng/table';
     ButtonModule,
     ConfirmDialogModule,
     SkeletonModule,
+    PaginatorModule,
+    MenuModule,
     TranslatePipe,
-    PrimeTemplate,
+    TaskCardComponent,
   ],
   providers: [ConfirmationService],
   templateUrl: './tasks-page.component.html',
@@ -30,10 +48,31 @@ import { TableModule } from 'primeng/table';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksPageComponent implements OnInit {
+  private readonly taskCardMenu = viewChild<Menu>('taskCardMenu');
+
+  constructor() {
+    effect(() => {
+      const len = this.tasks().length;
+      const rows = this.cardPageRows;
+      const first = this.cardPageFirst();
+      if (len === 0) {
+        if (first !== 0) this.cardPageFirst.set(0);
+        return;
+      }
+      if (first >= len) {
+        const newFirst = Math.floor((len - 1) / rows) * rows;
+        if (newFirst !== first) this.cardPageFirst.set(newFirst);
+      }
+    });
+  }
+
   protected readonly i18n = inject(TranslationService);
   protected readonly taskStore = inject(TaskStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly confirmation = inject(ConfirmationService);
+
+  /** Popup menu model for mobile task cards (⋮). */
+  protected readonly taskCardMenuModel = signal<MenuItem[]>([]);
 
   protected readonly tasks = this.taskStore.tasks;
 
@@ -41,6 +80,16 @@ export class TasksPageComponent implements OnInit {
   protected readonly showSkeleton = signal(false);
 
   protected readonly skeletonRows = [0, 1, 2, 3, 4] as const;
+
+  /** Card grid pagination (< lg); matches desktop table page size. */
+  protected readonly cardPageRows = 10;
+  protected readonly cardPageFirst = signal(0);
+
+  protected readonly cardGridTasks = computed(() => {
+    const all = this.tasks();
+    const first = this.cardPageFirst();
+    return all.slice(first, first + this.cardPageRows);
+  });
 
   ngOnInit(): void {
     this.reloadTasks();
@@ -87,6 +136,28 @@ export class TasksPageComponent implements OnInit {
 
   protected editTask(task: Task): void {
     this.taskForm.openEdit(task);
+  }
+
+  protected onTaskCardPageChange(event: { first?: number }): void {
+    this.cardPageFirst.set(event.first ?? 0);
+  }
+
+  protected onTaskCardMenuToggle(payload: TaskCardMenuToggle): void {
+    const task = payload.task;
+    void this.i18n.locale();
+    this.taskCardMenuModel.set([
+      {
+        label: this.i18n.translate('tasksPage.actions.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.editTask(task),
+      },
+      {
+        label: this.i18n.translate('tasksPage.actions.delete'),
+        icon: 'pi pi-trash',
+        command: () => this.confirmDelete(task),
+      },
+    ]);
+    queueMicrotask(() => this.taskCardMenu()?.toggle(payload.originalEvent));
   }
 
   protected confirmDelete(task: Task): void {

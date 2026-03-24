@@ -3,6 +3,7 @@ import {
   Component,
   OnInit,
   computed,
+  effect,
   inject,
   model,
   signal,
@@ -12,12 +13,14 @@ import { forkJoin, take, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
-import { TeamStoreService, UploaderInputComponent } from '@shared';
+import { TaskCardComponent, TeamStoreService, UploaderInputComponent } from '@shared';
+import { type Assignee, type Task } from '@shared/models/task.types';
 import { MenuItem, PrimeTemplate } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 
@@ -31,10 +34,12 @@ import { TableModule } from 'primeng/table';
     DialogModule,
     InputTextModule,
     SkeletonModule,
+    PaginatorModule,
     ReactiveFormsModule,
     TranslatePipe,
     UploaderInputComponent,
     PrimeTemplate,
+    TaskCardComponent,
   ],
   templateUrl: './team-page.component.html',
   styleUrl: './team-page.component.css',
@@ -42,6 +47,23 @@ import { TableModule } from 'primeng/table';
 })
 export class TeamPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+
+  constructor() {
+    effect(() => {
+      const len = this.users().length;
+      const rows = this.cardPageRows;
+      const first = this.cardPageFirst();
+      if (len === 0) {
+        if (first !== 0) this.cardPageFirst.set(0);
+        return;
+      }
+      if (first >= len) {
+        const newFirst = Math.floor((len - 1) / rows) * rows;
+        if (newFirst !== first) this.cardPageFirst.set(newFirst);
+      }
+    });
+  }
+
   protected readonly i18n = inject(TranslationService);
   protected readonly teamStore = inject(TeamStoreService);
 
@@ -51,6 +73,16 @@ export class TeamPageComponent implements OnInit {
   protected readonly showSkeleton = signal(false);
 
   protected readonly skeletonRows = [0, 1, 2, 3, 4] as const;
+
+  /** Card grid pagination (< lg); matches desktop table page size. */
+  protected readonly cardPageRows = 10;
+  protected readonly cardPageFirst = signal(0);
+
+  protected readonly cardGridUsers = computed(() => {
+    const all = this.users();
+    const first = this.cardPageFirst();
+    return all.slice(first, first + this.cardPageRows);
+  });
 
   readonly addVisible = model(false);
 
@@ -77,6 +109,28 @@ export class TeamPageComponent implements OnInit {
   });
 
   protected readonly tableMinWidth = '600px';
+
+  /** Maps a team member to a minimal `Task` shape for `task-card` in mobile layout. */
+  protected onTeamCardPageChange(event: { first?: number }): void {
+    this.cardPageFirst.set(event.first ?? 0);
+  }
+
+  protected userAsDisplayTask(u: Assignee): Task {
+    return {
+      id: u.id,
+      title: u.name,
+      description: u.email,
+      status: 'done',
+      priority: 'low',
+      dueDate: '—',
+      isOverdue: false,
+      completedAt: '',
+      assignee: u,
+      tags: [],
+      createdAt: '',
+      updatedAt: '',
+    };
+  }
 
   protected readonly saveError = signal(false);
 

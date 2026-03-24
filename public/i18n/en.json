@@ -47,6 +47,9 @@
     "settings": "Settings",
     "newTask": "New Task"
   },
+  "taskCard": {
+    "menuAria": "Task actions"
+  },
   "tasksPage": {
     "title": "Tasks",
     "description": "Browse every task in one place. Edit details or remove tasks you no longer need.",
@@ -104,6 +107,7 @@
       "saveFailed": "Could not save this user. The email or username may already exist."
     },
     "loadingSkeleton": "Loading team",
+    "empty": "No team members yet. Add someone to get started.",
     "cancel": "Cancel",
     "save": "Add"
   },

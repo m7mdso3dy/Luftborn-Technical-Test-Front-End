@@ -188,7 +188,12 @@
                   <circle cx="15" cy="16" r="1.25" />
                 </svg>
               </button>
-              <task-card class="min-w-0 flex-1" [task]="task" (cardClick)="openEditTask($event)" />
+              <task-card
+                class="min-w-0 flex-1"
+                [task]="task"
+                [showMenu]="false"
+                (cardClick)="openEditTask($event)"
+              />
             </div>
           } @empty {
             <div class="rounded-xl border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">

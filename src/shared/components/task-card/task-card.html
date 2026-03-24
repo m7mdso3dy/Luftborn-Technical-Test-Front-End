@@ -1,71 +1,91 @@
 <div
   class="task-card"
-  [class.task-card--overdue]="task().isOverdue"
-  role="button"
-  tabindex="0"
-  (click)="onCardClick()"
-  (keydown.enter)="onCardClick()"
-  (keydown.space)="$event.preventDefault(); onCardClick()"
+  [class.task-card--overdue]="task().isOverdue && !teamLayout()"
+  [class.task-card--team]="teamLayout()"
+  [attr.role]="teamLayout() ? 'article' : 'button'"
+  [attr.tabindex]="teamLayout() ? -1 : 0"
+  (click)="handleCardActivate()"
+  (keydown.enter)="handleCardActivate()"
+  (keydown.space)="onCardSpace($event)"
 >
-  <div class="flex items-start justify-between gap-2">
-    <span
-      class="inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-bold tracking-wider"
-      [class]="priorityBadge(task().priority).classes"
-    >
-      <span class="h-1.5 w-1.5 rounded-full" [class]="priorityBadge(task().priority).barClass"></span>
-      {{ priorityBadge(task().priority).label }}
-    </span>
-    <button
-      type="button"
-      class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-      aria-label="Task options"
-      (click)="onMenuClick($event)"
-    >
-      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-        <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
-      </svg>
-    </button>
-  </div>
+  @if (!teamLayout()) {
+    <div class="flex items-start justify-between gap-2">
+      <span
+        class="inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-bold tracking-wider"
+        [class]="priorityBadge(task().priority).classes"
+      >
+        <span class="h-1.5 w-1.5 rounded-full" [class]="priorityBadge(task().priority).barClass"></span>
+        {{ priorityBadge(task().priority).label }}
+      </span>
+      @if (showMenu()) {
+        <button
+          type="button"
+          class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+          [attr.aria-label]="'taskCard.menuAria' | tr: i18n.locale()"
+          aria-haspopup="menu"
+          (click)="onMenuButtonClick($event)"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+          </svg>
+        </button>
+      }
+    </div>
+  }
 
-  <h3 class="mt-2.5 text-sm font-semibold leading-snug text-slate-800">{{ task().title }}</h3>
+  <h3 class="text-sm font-semibold leading-snug text-slate-800" [class.mt-2.5]="!teamLayout()" [class.mt-0]="teamLayout()">
+    {{ task().title }}
+  </h3>
   <p class="mt-1 text-xs leading-relaxed text-slate-500 line-clamp-2">{{ task().description }}</p>
 
-  <div class="mt-3 space-y-1.5 text-xs text-slate-500">
-    @if (task().isOverdue) {
-      <div class="flex items-center gap-1.5 text-red-500">
-        <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-          <path d="M12 9v4M12 17h.01" stroke-linecap="round"/>
-        </svg>
-        <span>{{ task().overdueBy ?? 'Overdue' }}</span>
-      </div>
-    } @else {
-      <div class="flex items-center gap-1.5">
-        <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2"/>
-          <path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>
-        </svg>
-        <span>{{ task().dueDate }}</span>
-      </div>
-    }
+  @if (!teamLayout()) {
+    <div class="mt-3 space-y-1.5 text-xs text-slate-500">
+      @if (task().isOverdue) {
+        <div class="flex items-center gap-1.5 text-red-500">
+          <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <path d="M12 9v4M12 17h.01" stroke-linecap="round"/>
+          </svg>
+          <span>{{ task().overdueBy ?? 'Overdue' }}</span>
+        </div>
+      } @else {
+        <div class="flex items-center gap-1.5">
+          <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>
+          </svg>
+          <span>{{ task().dueDate }}</span>
+        </div>
+      }
 
-    @if (task().tags.length) {
-      <div class="flex items-center gap-1.5">
-        <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-          <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/>
-        </svg>
-        <span class="truncate">{{ task().tags[0] }}</span>
-      </div>
-    }
-  </div>
+      @if (task().tags.length) {
+        <div class="flex items-center gap-1.5">
+          <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+            <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+          <span class="truncate">{{ task().tags[0] }}</span>
+        </div>
+      }
+    </div>
+  }
 
   <div class="mt-3.5 flex items-center gap-2 border-t border-slate-100 pt-3">
-    <span
-      class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white"
-    >
-      {{ initials }}
-    </span>
-    <span class="text-xs text-slate-500">{{ assigneeHandle }}</span>
+    @if (assigneePhotoSrc; as src) {
+      <img
+        [src]="src"
+        [alt]="task().assignee.name"
+        class="h-7 w-7 shrink-0 rounded-full object-cover"
+      />
+    } @else {
+      <span
+        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white"
+      >
+        {{ initials }}
+      </span>
+    }
+    @if (!teamLayout()) {
+      <span class="text-xs text-slate-500">{{ assigneeHandle }}</span>
+    }
   </div>
 </div>
