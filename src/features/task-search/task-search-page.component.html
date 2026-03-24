@@ -21,6 +21,37 @@
     </div>
   </div>
 
+  <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-stretch lg:hidden">
+    <div class="relative min-w-0 flex-1">
+      <span
+        class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
+        aria-hidden="true"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" stroke-linecap="round" />
+        </svg>
+      </span>
+      <input
+        type="search"
+        [value]="searchDraft()"
+        (input)="onSearchInput($event)"
+        (keydown.enter)="submitSearch()"
+        [attr.aria-label]="'app.searchAria' | tr: i18n.locale()"
+        autocomplete="off"
+        [placeholder]="'app.searchPlaceholder' | tr: i18n.locale()"
+        class="h-11 w-full rounded-lg border border-slate-200 bg-white py-2 ps-11 pe-4 text-sm text-slate-800 shadow-sm outline-none ring-[#007bff]/20 placeholder:text-slate-400 focus:border-[#007bff] focus:ring-2"
+      />
+    </div>
+    <button
+      type="button"
+      class="h-11 shrink-0 rounded-lg bg-[#007bff] px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0069d9] sm:w-auto"
+      (click)="submitSearch()"
+    >
+      {{ 'searchPage.searchAction' | tr: i18n.locale() }}
+    </button>
+  </div>
+
   @if (showSkeleton()) {
     <div
       class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
@@ -43,7 +74,8 @@
     </div>
   } @else if (!searchQuery()) {
     <div class="rounded-xl border border-dashed border-slate-200 bg-white py-16 text-center shadow-sm">
-      <p class="text-sm text-slate-500">{{ 'searchPage.hintNoQuery' | tr: i18n.locale() }}</p>
+      <p class="text-sm text-slate-500 lg:hidden">{{ 'searchPage.hintNoQuery' | tr: i18n.locale() }}</p>
+      <p class="hidden text-sm text-slate-500 lg:block">{{ 'searchPage.hintNoQueryHeader' | tr: i18n.locale() }}</p>
     </div>
   } @else if (matches().length === 0) {
     <div class="rounded-xl border border-dashed border-slate-200 bg-white py-16 text-center shadow-sm">

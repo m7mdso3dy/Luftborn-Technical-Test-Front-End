@@ -74,12 +74,17 @@
   </div>
 
   <!-- Filter + Actions bar -->
-  <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
-    <nav class="flex items-center gap-1 rounded-lg bg-white p-1 shadow-sm ring-1 ring-slate-200/70" aria-label="Task filter">
+  <div
+    class="mt-6 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between"
+  >
+    <nav
+      class="flex w-full min-w-0 items-stretch gap-1 rounded-lg bg-white p-1 shadow-sm ring-1 ring-slate-200/70 lg:w-auto lg:items-center"
+      aria-label="Task filter"
+    >
       @for (tab of filterTabs; track tab.key) {
         <button
           type="button"
-          class="filter-tab"
+          class="filter-tab max-lg:min-w-0 max-lg:flex-1 max-lg:truncate max-lg:text-center"
           [class.filter-tab--active]="activeFilter() === tab.key"
           (click)="setFilter(tab.key)"
         >
@@ -88,7 +93,7 @@
       }
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex w-full items-center justify-between gap-3 lg:w-auto lg:justify-start">
       <!-- Sort dropdown -->
       <div #sortDropdown class="relative">
         <button

@@ -148,7 +148,9 @@
     "title": "Search results",
     "backToDashboard": "Back to dashboard",
     "resultsFor": "Results for",
-    "hintNoQuery": "Type a term in the search box above and press Enter to find tasks.",
+    "hintNoQuery": "Type a term in the search box and press Search or Enter to find tasks.",
+    "hintNoQueryHeader": "Use the search box in the header, then press Enter to find tasks.",
+    "searchAction": "Search",
     "noResults": "No tasks match your search.",
     "resultCount": "Matches",
     "loading": "Loading search results"

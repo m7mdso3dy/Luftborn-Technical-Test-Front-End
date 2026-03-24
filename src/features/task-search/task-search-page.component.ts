@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, map, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
@@ -31,6 +39,7 @@ function taskMatchesQuery(task: Task, q: string): boolean {
 export class TaskSearchPageComponent implements OnInit {
   protected readonly i18n = inject(TranslationService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly taskStore = inject(TaskStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
 
@@ -43,12 +52,30 @@ export class TaskSearchPageComponent implements OnInit {
     { initialValue: '' },
   );
 
+  /** Local input value; kept in sync with the URL when `q` changes. */
+  protected readonly searchDraft = signal('');
+
+  constructor() {
+    effect(() => {
+      this.searchDraft.set(this.searchQuery());
+    });
+  }
+
   protected readonly matches = computed(() => {
     const q = this.searchQuery();
     const tasks = this.taskStore.tasks();
     if (!q) return [];
     return tasks.filter((t) => taskMatchesQuery(t, q));
   });
+
+  protected onSearchInput(ev: Event): void {
+    this.searchDraft.set((ev.target as HTMLInputElement).value);
+  }
+
+  protected submitSearch(): void {
+    const q = this.searchDraft().trim();
+    void this.router.navigate(['/dashboard/search'], { queryParams: q.length ? { q } : {} });
+  }
 
   ngOnInit(): void {
     forkJoin({
