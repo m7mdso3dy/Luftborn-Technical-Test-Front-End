@@ -22,6 +22,33 @@
     "settings": "الإعدادات",
     "newTask": "مهمة جديدة"
   },
+  "tasksPage": {
+    "title": "المهام",
+    "description": "اعرض كل المهام في مكان واحد. عدّل التفاصيل أو احذف المهام التي لم تعد تحتاجها.",
+    "breadcrumb": {
+      "dashboard": "لوحة التحكم",
+      "tasks": "المهام"
+    },
+    "columns": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "assignee": "المكلف",
+      "due": "الاستحقاق",
+      "actions": "إجراءات"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "delete": {
+      "header": "حذف المهمة",
+      "message": "هل أنت متأكد أنك تريد حذف \"{title}\"؟ لا يمكن التراجع عن هذا.",
+      "accept": "حذف",
+      "reject": "إلغاء"
+    }
+  },
   "dashboard": {
     "filter": {
       "all": "الكل",

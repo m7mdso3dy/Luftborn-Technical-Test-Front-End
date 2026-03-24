@@ -157,4 +157,8 @@ export class TaskStoreService {
       return next;
     });
   }
+
+  remove(id: string): void {
+    this._tasks.update((list) => list.filter((t) => t.id !== id));
+  }
 }

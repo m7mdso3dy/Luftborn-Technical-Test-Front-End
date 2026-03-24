@@ -1,0 +1,21 @@
+@reference 'tailwindcss';
+
+.tasks-page {
+  @apply p-1 sm:p-0;
+}
+
+/* PrimeNG table: fixed 200px per column (7 columns → 1400px min width). */
+:host ::ng-deep .tasks-table :is(th, td) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .tasks-table :is(th, td):last-child {
+  white-space: normal;
+}

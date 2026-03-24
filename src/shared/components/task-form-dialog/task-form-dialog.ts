@@ -12,7 +12,12 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { PrimeTemplate } from 'primeng/api';
@@ -31,6 +36,10 @@ import {
   taskFormCrossFieldValidator,
   taskTitleValidator,
 } from './task-form.validators';
+
+const taskFormGroupOptions: AbstractControlOptions = {
+  validators: [taskFormCrossFieldValidator],
+};
 
 @Component({
   selector: 'app-task-form-dialog',
@@ -109,7 +118,7 @@ export class TaskFormDialogComponent {
       assigneeId: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
       completionNote: this.fb.control('', { nonNullable: true }),
     },
-    { validators: [taskFormCrossFieldValidator] },
+    taskFormGroupOptions,
   );
 
   protected readonly submitting = signal(false);
