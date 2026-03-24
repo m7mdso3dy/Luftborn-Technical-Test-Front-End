@@ -1,5 +1,7 @@
-import { Component, inject, OnInit, output } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
@@ -43,8 +45,41 @@ export class DashboardLayoutComponent implements OnInit {
   private readonly taskStore = inject(TaskStoreService);
   private readonly teamStore = inject(TeamStoreService);
 
+  /** Header search field; synced from `?q=` when on `/dashboard/search`. */
+  protected readonly searchDraft = signal('');
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.syncSearchFromUrl());
+  }
+
   ngOnInit(): void {
     this.teamStore.refresh().subscribe();
+    this.syncSearchFromUrl();
+  }
+
+  protected syncSearchFromUrl(): void {
+    const path = this.router.url.split('?')[0];
+    if (!path.includes('/dashboard/search')) {
+      return;
+    }
+    const raw = this.router.parseUrl(this.router.url).queryParams['q'];
+    const q = typeof raw === 'string' ? raw : Array.isArray(raw) ? (raw[0] ?? '') : '';
+    this.searchDraft.set(q);
+  }
+
+  protected onSearchInput(ev: Event): void {
+    const el = ev.target as HTMLInputElement;
+    this.searchDraft.set(el.value);
+  }
+
+  protected submitSearch(): void {
+    const q = this.searchDraft().trim();
+    void this.router.navigate(['/dashboard/search'], { queryParams: q.length ? { q } : {} });
   }
 
   /** Derived from the logged-in profile (or JWT) in `AuthService`. */

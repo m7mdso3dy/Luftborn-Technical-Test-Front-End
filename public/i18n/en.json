@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Task Manager",
-    "searchPlaceholder": "Search tasks..."
+    "searchPlaceholder": "Search tasks...",
+    "searchAria": "Search tasks. Press Enter to view results."
   },
   "nav": {
     "notifications": "Notifications",
@@ -131,6 +132,15 @@
       "done": "Done"
     },
     "empty": "No tasks here"
+  },
+  "searchPage": {
+    "title": "Search results",
+    "backToDashboard": "Back to dashboard",
+    "resultsFor": "Results for",
+    "hintNoQuery": "Type a term in the search box above and press Enter to find tasks.",
+    "noResults": "No tasks match your search.",
+    "resultCount": "Matches",
+    "loading": "Loading search results"
   },
   "taskForm": {
     "titleCreate": "New task",

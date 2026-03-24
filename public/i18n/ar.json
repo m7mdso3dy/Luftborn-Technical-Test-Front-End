@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "مدير المهام",
-    "searchPlaceholder": "البحث في المهام..."
+    "searchPlaceholder": "البحث في المهام...",
+    "searchAria": "البحث في المهام. اضغط Enter لعرض النتائج."
   },
   "nav": {
     "notifications": "الإشعارات",
@@ -131,6 +132,15 @@
       "done": "مكتمل"
     },
     "empty": "لا توجد مهام هنا"
+  },
+  "searchPage": {
+    "title": "نتائج البحث",
+    "backToDashboard": "العودة إلى لوحة التحكم",
+    "resultsFor": "نتائج البحث عن",
+    "hintNoQuery": "اكتب نصاً في مربع البحث أعلاه واضغط Enter للبحث في المهام.",
+    "noResults": "لا توجد مهام مطابقة لبحثك.",
+    "resultCount": "عدد النتائج",
+    "loading": "جاري تحميل نتائج البحث"
   },
   "taskForm": {
     "titleCreate": "مهمة جديدة",

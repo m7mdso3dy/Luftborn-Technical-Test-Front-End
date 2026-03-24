@@ -1,0 +1,5 @@
+@reference 'tailwindcss';
+
+.task-search-page {
+  @apply mx-auto max-w-7xl px-1;
+}

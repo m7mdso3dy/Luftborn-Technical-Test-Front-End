@@ -26,6 +26,11 @@
       </span>
       <input
         type="search"
+        [value]="searchDraft()"
+        (input)="onSearchInput($event)"
+        (keydown.enter)="submitSearch()"
+        [attr.aria-label]="'app.searchAria' | tr: i18n.locale()"
+        autocomplete="off"
         [placeholder]="'app.searchPlaceholder' | tr: i18n.locale()"
         class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 ps-11 pe-4 text-sm text-slate-800 shadow-sm outline-none ring-[#007bff]/20 placeholder:text-slate-400 focus:border-[#007bff] focus:ring-2"
       />
