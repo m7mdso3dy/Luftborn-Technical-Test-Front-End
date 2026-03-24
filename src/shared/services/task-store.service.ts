@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import {
   Observable,
@@ -18,10 +18,17 @@ import {
   normalizeTaskFromApi,
   taskToApiPayload,
 } from '../utils/task-api.mapper';
-import { type Task, type TaskStatus } from '../models/task.types';
+import { type Task, type TaskPriority, type TaskStatus } from '../models/task.types';
 
 interface TasksApiResponse {
   tasks?: unknown[];
+}
+
+/** Optional query filters for `GET /api/tasks`. */
+export interface TaskListFilters {
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  assigneeId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,11 +44,22 @@ export class TaskStoreService {
   /** Set when the last tasks list request failed. */
   readonly tasksLoadError = signal(false);
 
-  /** Load tasks from `GET /api/tasks`. */
-  refresh(): Observable<void> {
+  /** Build query params for filtered list requests. */
+  private static paramsFromFilters(filters?: TaskListFilters): HttpParams {
+    let p = new HttpParams();
+    if (!filters) return p;
+    if (filters.status) p = p.set('status', filters.status);
+    if (filters.priority) p = p.set('priority', filters.priority);
+    if (filters.assigneeId?.trim()) p = p.set('assigneeId', filters.assigneeId.trim());
+    return p;
+  }
+
+  /** Load tasks from `GET /api/tasks` (optional server-side filters). */
+  refresh(filters?: TaskListFilters): Observable<void> {
     this.tasksLoading.set(true);
     this.tasksLoadError.set(false);
-    return this.http.get<TasksApiResponse>(`${API_BASE}/tasks`).pipe(
+    const params = TaskStoreService.paramsFromFilters(filters);
+    return this.http.get<TasksApiResponse>(`${API_BASE}/tasks`, { params }).pipe(
       map((res) =>
         (res.tasks ?? []).map((row) => normalizeTaskFromApi(row as ApiTaskRow)),
       ),

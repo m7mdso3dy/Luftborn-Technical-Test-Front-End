@@ -79,7 +79,17 @@
     "empty": "No tasks returned from the server.",
     "loadError": "Could not load tasks. Check that the API is running and you are signed in.",
     "retry": "Try again",
-    "loadingSkeleton": "Loading tasks"
+    "loadingSkeleton": "Loading tasks",
+    "filters": {
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "allStatuses": "All statuses",
+      "allPriorities": "All priorities",
+      "allAssignees": "All assignees",
+      "clear": "Clear filters"
+    },
+    "emptyFiltered": "No tasks match the selected filters."
   },
   "teamPage": {
     "title": "Team",

@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { of } from 'rxjs';
 
 import { TranslationService } from '@core';
-import { TaskStoreService, TeamStoreService } from '@shared';
+import { TaskStoreService, TeamStoreService, type TaskListFilters } from '@shared';
 import { type Assignee, type Statistic, type Task } from '@shared/models/task.types';
 
 /** Minimal `TranslationService` for unit tests (no HTTP). */
@@ -73,7 +73,7 @@ export function createTaskStoreMock(tasks: Task[] = [createTaskFixture()]): Pick
     tasks: _tasks.asReadonly(),
     tasksLoading: signal(false),
     tasksLoadError: signal(false),
-    refresh: () => of(undefined),
+    refresh: (_filters?: TaskListFilters) => of(undefined),
     upsert: () => {},
     remove: () => {},
     updateTaskStatus: () => of(first()),

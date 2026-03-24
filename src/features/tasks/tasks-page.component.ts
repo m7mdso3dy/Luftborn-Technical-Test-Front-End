@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
@@ -16,7 +17,9 @@ import {
   TaskCardComponent,
   TaskFormCoordinatorService,
   TaskStoreService,
+  TeamStoreService,
   type TaskCardMenuToggle,
+  type TaskListFilters,
 } from '@shared';
 import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
 import { ConfirmationService, MenuItem } from 'primeng/api';
@@ -25,6 +28,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Menu, MenuModule } from 'primeng/menu';
 import { PaginatorModule } from 'primeng/paginator';
+import { Select } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 
@@ -39,6 +43,8 @@ import { TableModule } from 'primeng/table';
     SkeletonModule,
     PaginatorModule,
     MenuModule,
+    FormsModule,
+    Select,
     TranslatePipe,
     TaskCardComponent,
   ],
@@ -68,6 +74,7 @@ export class TasksPageComponent implements OnInit {
 
   protected readonly i18n = inject(TranslationService);
   protected readonly taskStore = inject(TaskStoreService);
+  protected readonly teamStore = inject(TeamStoreService);
   private readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly confirmation = inject(ConfirmationService);
 
@@ -91,15 +98,85 @@ export class TasksPageComponent implements OnInit {
     return all.slice(first, first + this.cardPageRows);
   });
 
+  /** Filter dropdown state (empty string = no filter). */
+  protected readonly filterStatus = signal('');
+  protected readonly filterPriority = signal('');
+  protected readonly filterAssigneeId = signal('');
+
+  protected readonly hasActiveFilters = computed(
+    () =>
+      !!this.filterStatus() ||
+      !!this.filterPriority() ||
+      !!this.filterAssigneeId().trim(),
+  );
+
+  protected readonly statusFilterOptions = computed(() => {
+    void this.i18n.locale();
+    return [
+      { label: this.i18n.translate('tasksPage.filters.allStatuses'), value: '' },
+      { label: this.i18n.translate('taskForm.status.todo'), value: 'todo' as const },
+      { label: this.i18n.translate('taskForm.status.inProgress'), value: 'in_progress' as const },
+      { label: this.i18n.translate('taskForm.status.done'), value: 'done' as const },
+    ];
+  });
+
+  protected readonly priorityFilterOptions = computed(() => {
+    void this.i18n.locale();
+    return [
+      { label: this.i18n.translate('tasksPage.filters.allPriorities'), value: '' },
+      { label: this.i18n.translate('taskForm.priority.high'), value: 'high' as const },
+      { label: this.i18n.translate('taskForm.priority.medium'), value: 'medium' as const },
+      { label: this.i18n.translate('taskForm.priority.low'), value: 'low' as const },
+    ];
+  });
+
+  protected readonly assigneeFilterOptions = computed(() => {
+    void this.i18n.locale();
+    return [
+      { label: this.i18n.translate('tasksPage.filters.allAssignees'), value: '' },
+      ...this.teamStore.users().map((u) => ({ label: u.name, value: u.id })),
+    ];
+  });
+
   ngOnInit(): void {
+    this.showSkeleton.set(true);
+    forkJoin({
+      team: this.teamStore.refresh(),
+      data: this.taskStore.refresh(this.buildFilters()),
+      minDelay: timer(SKELETON_MIN_DISPLAY_MS),
+    }).subscribe({
+      complete: () => this.showSkeleton.set(false),
+    });
+  }
+
+  protected buildFilters(): TaskListFilters {
+    const f: TaskListFilters = {};
+    const st = this.filterStatus();
+    if (st === 'todo' || st === 'in_progress' || st === 'done') f.status = st;
+    const pr = this.filterPriority();
+    if (pr === 'high' || pr === 'medium' || pr === 'low') f.priority = pr;
+    const aid = this.filterAssigneeId().trim();
+    if (aid) f.assigneeId = aid;
+    return f;
+  }
+
+  protected applyFilters(): void {
+    this.cardPageFirst.set(0);
     this.reloadTasks();
   }
 
-  /** Fetches tasks and keeps skeleton visible at least `SKELETON_MIN_DISPLAY_MS`. */
+  protected clearFilters(): void {
+    this.filterStatus.set('');
+    this.filterPriority.set('');
+    this.filterAssigneeId.set('');
+    this.applyFilters();
+  }
+
+  /** Fetches tasks (with current filters) and keeps skeleton visible at least `SKELETON_MIN_DISPLAY_MS`. */
   protected reloadTasks(): void {
     this.showSkeleton.set(true);
     forkJoin({
-      data: this.taskStore.refresh(),
+      data: this.taskStore.refresh(this.buildFilters()),
       minDelay: timer(SKELETON_MIN_DISPLAY_MS),
     }).subscribe({
       complete: () => this.showSkeleton.set(false),

@@ -89,6 +89,7 @@ function newId(prefix) {
 }
 
 const TASK_STATUSES = ['todo', 'in_progress', 'done'];
+const TASK_PRIORITIES = ['high', 'medium', 'low'];
 
 function startOfDay(d) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -218,12 +219,30 @@ app.delete('/api/users/:id', (req, res) => {
   res.status(204).send();
 });
 
-/** Tasks CRUD */
-app.get('/api/tasks', (_req, res) => {
+/** Tasks CRUD — GET supports optional filters: ?status=&priority=&assigneeId= */
+app.get('/api/tasks', (req, res) => {
   const data = loadTasksPayload();
   tasks = data.tasks;
   meta = data.meta;
-  res.json({ tasks, meta });
+  let list = [...tasks];
+  const q = req.query || {};
+  const status = q.status != null ? String(q.status) : '';
+  if (status && TASK_STATUSES.includes(status)) {
+    list = list.filter((t) => t.status === status);
+  }
+  const priority = q.priority != null ? String(q.priority) : '';
+  if (priority && TASK_PRIORITIES.includes(priority)) {
+    list = list.filter((t) => t.priority === priority);
+  }
+  const assigneeId = q.assigneeId != null ? String(q.assigneeId).trim() : '';
+  if (assigneeId) {
+    list = list.filter((t) => t.assignee && String(t.assignee.id) === assigneeId);
+  }
+  const outMeta = {
+    ...meta,
+    totalCount: list.length,
+  };
+  res.json({ tasks: list, meta: outMeta });
 });
 
 app.get('/api/tasks/:id', (req, res) => {

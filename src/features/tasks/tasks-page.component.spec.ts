@@ -3,11 +3,12 @@ import { provideRouter } from '@angular/router';
 
 import { TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
-import { TaskFormCoordinatorService, TaskStoreService } from '@shared';
+import { TaskFormCoordinatorService, TaskStoreService, TeamStoreService } from '@shared';
 import { ConfirmationService } from 'primeng/api';
 import { ShellOutletComponent } from '../../app/shell-outlet.component';
 import {
   createTaskStoreMock,
+  createTeamStoreMock,
   createTranslationServiceMock,
 } from '../../testing/test-utils';
 import { TasksPageComponent } from './tasks-page.component';
@@ -21,6 +22,7 @@ describe('TasksPageComponent', () => {
         ConfirmationService,
         { provide: TranslationService, useValue: createTranslationServiceMock() },
         { provide: TaskStoreService, useValue: createTaskStoreMock() },
+        { provide: TeamStoreService, useValue: createTeamStoreMock() },
         TaskFormCoordinatorService,
       ],
     }).compileComponents();

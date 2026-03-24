@@ -79,7 +79,17 @@
     "empty": "لا توجد مهام من الخادم.",
     "loadError": "تعذر تحميل المهام. تأكد من تشغيل واجهة البرمجة وأنك مسجل الدخول.",
     "retry": "إعادة المحاولة",
-    "loadingSkeleton": "جاري تحميل المهام"
+    "loadingSkeleton": "جاري تحميل المهام",
+    "filters": {
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "assignee": "المكلف",
+      "allStatuses": "كل الحالات",
+      "allPriorities": "كل الأولويات",
+      "allAssignees": "كل المكلفين",
+      "clear": "مسح التصفية"
+    },
+    "emptyFiltered": "لا توجد مهام تطابق التصفية المحددة."
   },
   "teamPage": {
     "title": "الفريق",
