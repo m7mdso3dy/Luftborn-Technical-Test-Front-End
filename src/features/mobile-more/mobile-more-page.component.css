@@ -1,0 +1,25 @@
+@reference 'tailwindcss';
+
+.mobile-more-page {
+  @apply mx-auto max-w-lg;
+}
+
+.more-menu-link {
+  @apply flex w-full items-center gap-3 rounded-xl px-3 py-3 text-slate-700 no-underline transition-colors;
+}
+
+.more-menu-link:hover:not(.more-menu-link--active) {
+  @apply bg-white/80;
+}
+
+.more-menu-link--active {
+  @apply bg-[#007bff] text-white shadow-sm;
+}
+
+.more-menu-link--active [aria-hidden='true'] {
+  @apply text-white;
+}
+
+.more-menu-link--danger:hover {
+  @apply bg-red-50;
+}

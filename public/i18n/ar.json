@@ -6,6 +6,11 @@
   },
   "nav": {
     "notifications": "الإشعارات",
+    "bottomBar": "التنقل الرئيسي",
+    "mainContent": "المحتوى الرئيسي",
+    "openMore": "قائمة المزيد",
+    "langToggle": "تبديل اللغة",
+    "more": "المزيد",
     "changeLanguage": "اللغة",
     "logout": "تسجيل الخروج",
     "userAvatar": "الملف الشخصي",
@@ -132,6 +137,12 @@
       "done": "مكتمل"
     },
     "empty": "لا توجد مهام هنا"
+  },
+  "morePage": {
+    "title": "المزيد",
+    "subtitle": "البحث والتقويم والفريق والحساب",
+    "back": "رجوع",
+    "navAria": "تنقل إضافي"
   },
   "searchPage": {
     "title": "نتائج البحث",

@@ -27,6 +27,9 @@ const loadTeamPage = () =>
 const loadTaskSearchPage = () =>
   import('@features/task-search/task-search-page.component').then((m) => m.TaskSearchPageComponent);
 
+const loadMobileMorePage = () =>
+  import('@features/mobile-more/mobile-more-page.component').then((m) => m.MobileMorePageComponent);
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -50,6 +53,7 @@ export const routes: Routes = [
           },
           { path: 'tasks', loadComponent: loadTasksPage, data: { title: 'Tasks' } },
           { path: 'search', loadComponent: loadTaskSearchPage, data: { title: 'Search' } },
+          { path: 'more', loadComponent: loadMobileMorePage, data: { title: 'More' } },
           { path: 'calendar', loadComponent: loadShellOutlet },
           { path: 'analytics', loadComponent: loadShellOutlet },
           { path: 'team', loadComponent: loadTeamPage, data: { title: 'Team' } },

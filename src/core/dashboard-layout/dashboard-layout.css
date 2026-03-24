@@ -11,3 +11,31 @@
 .side-nav-link.side-nav-active {
   @apply bg-[#007bff] text-white shadow-sm;
 }
+
+.bottom-app-bar {
+  padding-top: 0.25rem;
+}
+
+.bottom-nav-item {
+  @apply flex min-h-14 min-w-0 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 px-1 py-1.5 text-center no-underline text-slate-600 transition-colors;
+}
+
+.bottom-nav-item__label {
+  @apply max-w-full truncate text-[10px] font-medium leading-tight text-slate-500;
+}
+
+.bottom-nav-item--lang .bottom-nav-item__label--lang {
+  @apply max-w-[4.5rem] text-[9px];
+}
+
+.bottom-nav-item--active .bottom-nav-item__label {
+  @apply font-semibold text-[#007bff];
+}
+
+.bottom-nav-item--active .bottom-nav-item__icon {
+  @apply text-[#007bff];
+}
+
+.bottom-nav-item:active {
+  @apply bg-slate-50;
+}

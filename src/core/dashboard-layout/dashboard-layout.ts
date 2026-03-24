@@ -6,6 +6,11 @@ import { filter } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
 import {
+  DASHBOARD_SIDE_NAV_ITEMS,
+  type DashboardSideNavIcon,
+  type DashboardSideNavItem,
+} from './dashboard-nav.config';
+import {
   TaskFormCoordinatorService,
   TaskFormDialogComponent,
   TaskStoreService,
@@ -13,20 +18,7 @@ import {
 } from '@shared';
 import { type Task } from '@shared/models/task.types';
 
-export type DashboardSideNavIcon =
-  | 'dashboard'
-  | 'tasks'
-  | 'calendar'
-  | 'analytics'
-  | 'team'
-  | 'settings';
-
-export interface DashboardSideNavItem {
-  labelKey: string;
-  route: string;
-  icon: DashboardSideNavIcon;
-  exact?: boolean;
-}
+export type { DashboardSideNavIcon, DashboardSideNavItem } from './dashboard-nav.config';
 
 @Component({
   selector: 'dashboard-layout',
@@ -87,17 +79,19 @@ export class DashboardLayoutComponent implements OnInit {
 
   readonly newTask = output<void>();
 
-  readonly sideNavItems: readonly DashboardSideNavItem[] = [
-    { labelKey: 'sidebar.dashboard', route: '/dashboard', icon: 'dashboard', exact: true },
-    { labelKey: 'sidebar.tasks', route: '/dashboard/tasks', icon: 'tasks' },
-    { labelKey: 'sidebar.calendar', route: '/dashboard/calendar', icon: 'calendar' },
-    { labelKey: 'sidebar.analytics', route: '/dashboard/analytics', icon: 'analytics' },
-    { labelKey: 'sidebar.team', route: '/dashboard/team', icon: 'team' },
-    { labelKey: 'sidebar.settings', route: '/dashboard/settings', icon: 'settings' },
-  ];
+  readonly sideNavItems = DASHBOARD_SIDE_NAV_ITEMS;
 
   protected pickLang(locale: AppLocale): void {
     void this.i18n.setLocale(locale);
+  }
+
+  protected toggleLang(): void {
+    void this.i18n.toggleLocale();
+  }
+
+  /** Bottom bar: compact language indicator. */
+  protected langShortLabel(): string {
+    return this.i18n.locale() === 'ar' ? 'ع' : 'EN';
   }
 
   protected langBtnClass(locale: AppLocale): string {

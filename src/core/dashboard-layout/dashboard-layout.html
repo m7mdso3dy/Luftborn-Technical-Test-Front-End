@@ -1,102 +1,128 @@
 <div class="flex min-h-screen flex-col bg-[#f4f6f9]">
   <header
-    class="flex h-16 shrink-0 items-center gap-6 border-b border-slate-200/90 bg-white px-6 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+    class="flex h-14 shrink-0 items-center border-b border-slate-200/90 bg-white px-4 shadow-[0_1px_0_rgba(0,0,0,0.03)] lg:h-16 lg:px-6"
   >
-    <a routerLink="/dashboard" class="flex shrink-0 items-center gap-2.5 no-underline">
+    <!-- Mobile / tablet: title + initials only -->
+    <div class="flex w-full items-center justify-between gap-3 lg:hidden">
+      <a routerLink="/dashboard" class="flex min-w-0 items-center gap-2 no-underline">
+        <span
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#007bff] text-white shadow-sm"
+          aria-hidden="true"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="truncate text-base font-bold tracking-tight text-[#0d3b66]">
+          {{ 'app.title' | tr: i18n.locale() }}
+        </span>
+      </a>
       <span
-        class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#007bff] text-white shadow-sm"
-        aria-hidden="true"
-      >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </span>
-      <span class="text-lg font-bold tracking-tight text-[#0d3b66]">{{ 'app.title' | tr: i18n.locale() }}</span>
-    </a>
-
-    <div class="relative mx-auto max-w-2xl min-w-0 flex-1">
-      <span
-        class="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-        aria-hidden="true"
-      >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="7" />
-          <path d="M20 20l-4-4" stroke-linecap="round" />
-        </svg>
-      </span>
-      <input
-        type="search"
-        [value]="searchDraft()"
-        (input)="onSearchInput($event)"
-        (keydown.enter)="submitSearch()"
-        [attr.aria-label]="'app.searchAria' | tr: i18n.locale()"
-        autocomplete="off"
-        [placeholder]="'app.searchPlaceholder' | tr: i18n.locale()"
-        class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 ps-11 pe-4 text-sm text-slate-800 shadow-sm outline-none ring-[#007bff]/20 placeholder:text-slate-400 focus:border-[#007bff] focus:ring-2"
-      />
-    </div>
-
-    <div class="ms-auto flex shrink-0 items-center gap-4 sm:gap-5">
-      <button
-        type="button"
-        class="rounded-lg p-2 text-[#c9a227] transition-colors hover:bg-amber-50 hover:text-[#b8941f]"
-        [attr.aria-label]="'nav.notifications' | tr: i18n.locale()"
-      >
-        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path
-            d="M12 22a2 2 0 002-2H10a2 2 0 002 2zm6-6V11a6 6 0 10-12 0v5l-2 2v1h16v-1l-2-2z"
-          />
-        </svg>
-      </button>
-
-      <button
-        type="button"
-        class="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 sm:px-3 sm:text-sm"
-        (click)="logout()"
-      >
-        {{ 'nav.logout' | tr: i18n.locale() }}
-      </button>
-
-      <div
-        class="flex items-center gap-2"
-        role="group"
-        [attr.aria-label]="'nav.changeLanguage' | tr: i18n.locale()"
-      >
-        <span class="hidden text-sm text-slate-600 md:inline">{{ 'nav.changeLanguage' | tr: i18n.locale() }}</span>
-        <div class="flex rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-sm">
-          <button
-            type="button"
-            (click)="pickLang('en')"
-            [class]="langBtnClass('en')"
-            [attr.aria-pressed]="i18n.locale() === 'en'"
-            [attr.aria-label]="'nav.switchToEnglish' | tr: i18n.locale()"
-          >
-            {{ 'nav.languageEnglish' | tr: i18n.locale() }}
-          </button>
-          <button
-            type="button"
-            (click)="pickLang('ar')"
-            [class]="langBtnClass('ar')"
-            [attr.aria-pressed]="i18n.locale() === 'ar'"
-            [attr.aria-label]="'nav.switchToArabic' | tr: i18n.locale()"
-          >
-            {{ 'nav.languageArabic' | tr: i18n.locale() }}
-          </button>
-        </div>
-      </div>
-
-      <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007bff] text-sm font-semibold text-white shadow-sm"
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#007bff] text-xs font-semibold text-white shadow-sm"
         [attr.aria-label]="('nav.userAvatar' | tr: i18n.locale()) + ': ' + userInitials()"
       >
         {{ userInitials() }}
       </span>
     </div>
+
+    <!-- Desktop: full header -->
+    <div class="hidden w-full items-center gap-6 lg:flex">
+      <a routerLink="/dashboard" class="flex shrink-0 items-center gap-2.5 no-underline">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#007bff] text-white shadow-sm"
+          aria-hidden="true"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="text-lg font-bold tracking-tight text-[#0d3b66]">{{ 'app.title' | tr: i18n.locale() }}</span>
+      </a>
+
+      <div class="relative mx-auto max-w-2xl min-w-0 flex-1">
+        <span
+          class="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          aria-hidden="true"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-4-4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <input
+          type="search"
+          [value]="searchDraft()"
+          (input)="onSearchInput($event)"
+          (keydown.enter)="submitSearch()"
+          [attr.aria-label]="'app.searchAria' | tr: i18n.locale()"
+          autocomplete="off"
+          [placeholder]="'app.searchPlaceholder' | tr: i18n.locale()"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 ps-11 pe-4 text-sm text-slate-800 shadow-sm outline-none ring-[#007bff]/20 placeholder:text-slate-400 focus:border-[#007bff] focus:ring-2"
+        />
+      </div>
+
+      <div class="ms-auto flex shrink-0 items-center gap-4 sm:gap-5">
+        <button
+          type="button"
+          class="rounded-lg p-2 text-[#c9a227] transition-colors hover:bg-amber-50 hover:text-[#b8941f]"
+          [attr.aria-label]="'nav.notifications' | tr: i18n.locale()"
+        >
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 22a2 2 0 002-2H10a2 2 0 002 2zm6-6V11a6 6 0 10-12 0v5l-2 2v1h16v-1l-2-2z"
+            />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 sm:px-3 sm:text-sm"
+          (click)="logout()"
+        >
+          {{ 'nav.logout' | tr: i18n.locale() }}
+        </button>
+
+        <div
+          class="flex items-center gap-2"
+          role="group"
+          [attr.aria-label]="'nav.changeLanguage' | tr: i18n.locale()"
+        >
+          <span class="hidden text-sm text-slate-600 md:inline">{{ 'nav.changeLanguage' | tr: i18n.locale() }}</span>
+          <div class="flex rounded-lg border border-slate-200 bg-slate-50/80 p-0.5 shadow-sm">
+            <button
+              type="button"
+              (click)="pickLang('en')"
+              [class]="langBtnClass('en')"
+              [attr.aria-pressed]="i18n.locale() === 'en'"
+              [attr.aria-label]="'nav.switchToEnglish' | tr: i18n.locale()"
+            >
+              {{ 'nav.languageEnglish' | tr: i18n.locale() }}
+            </button>
+            <button
+              type="button"
+              (click)="pickLang('ar')"
+              [class]="langBtnClass('ar')"
+              [attr.aria-pressed]="i18n.locale() === 'ar'"
+              [attr.aria-label]="'nav.switchToArabic' | tr: i18n.locale()"
+            >
+              {{ 'nav.languageArabic' | tr: i18n.locale() }}
+            </button>
+          </div>
+        </div>
+
+        <span
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#007bff] text-sm font-semibold text-white shadow-sm"
+          [attr.aria-label]="('nav.userAvatar' | tr: i18n.locale()) + ': ' + userInitials()"
+        >
+          {{ userInitials() }}
+        </span>
+      </div>
+    </div>
   </header>
 
   <div class="flex min-h-0 flex-1">
     <aside
-      class="flex w-64 shrink-0 flex-col gap-1 border-e border-slate-200/50 px-4 py-6"
+      class="hidden w-64 shrink-0 flex-col gap-1 border-e border-slate-200/50 px-4 py-6 lg:flex"
       [attr.aria-label]="'sidebar.mainNav' | tr: i18n.locale()"
     >
       @for (item of sideNavItems; track item.route) {
@@ -176,10 +202,77 @@
       </button>
     </aside>
 
-    <main class="min-h-0 min-w-0 flex-1 overflow-auto p-6">
+    <main
+      class="min-h-0 min-w-0 flex-1 overflow-auto px-4 pt-4 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] lg:px-6 lg:py-6"
+      [attr.aria-label]="'nav.mainContent' | tr: i18n.locale()"
+    >
       <router-outlet />
     </main>
   </div>
+
+  <!-- Mobile / tablet bottom bar (hidden on lg+) -->
+  <nav
+    class="bottom-app-bar fixed bottom-0 start-0 end-0 z-40 flex border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(0,0,0,0.06)] lg:hidden"
+    role="navigation"
+    [attr.aria-label]="'nav.bottomBar' | tr: i18n.locale()"
+  >
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="bottom-nav-item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="bottom-nav-item"
+      [attr.aria-label]="'sidebar.dashboard' | tr: i18n.locale()"
+    >
+      <span class="bottom-nav-item__icon text-slate-500" aria-hidden="true">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+        </svg>
+      </span>
+      <span class="bottom-nav-item__label">{{ 'sidebar.dashboard' | tr: i18n.locale() }}</span>
+    </a>
+    <a
+      routerLink="/dashboard/tasks"
+      routerLinkActive="bottom-nav-item--active"
+      class="bottom-nav-item"
+      [attr.aria-label]="'sidebar.tasks' | tr: i18n.locale()"
+    >
+      <span class="bottom-nav-item__icon text-emerald-600" aria-hidden="true">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="bottom-nav-item__label">{{ 'sidebar.tasks' | tr: i18n.locale() }}</span>
+    </a>
+    <button
+      type="button"
+      class="bottom-nav-item bottom-nav-item--lang border-0 bg-transparent"
+      (click)="toggleLang()"
+      [attr.aria-label]="('nav.langToggle' | tr: i18n.locale()) + ' (' + langShortLabel() + ')'"
+    >
+      <span
+        class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"
+      >
+        {{ langShortLabel() }}
+      </span>
+      <span class="bottom-nav-item__label bottom-nav-item__label--lang">{{ 'nav.changeLanguage' | tr: i18n.locale() }}</span>
+    </button>
+    <a
+      routerLink="/dashboard/more"
+      routerLinkActive="bottom-nav-item--active"
+      class="bottom-nav-item"
+      [attr.aria-label]="'nav.openMore' | tr: i18n.locale()"
+    >
+      <span class="bottom-nav-item__icon text-slate-500" aria-hidden="true">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+          <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <span class="bottom-nav-item__label">{{ 'nav.more' | tr: i18n.locale() }}</span>
+    </a>
+  </nav>
 
   <app-task-form-dialog
     [visible]="taskForm.taskFormVisible()"

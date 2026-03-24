@@ -6,6 +6,11 @@
   },
   "nav": {
     "notifications": "Notifications",
+    "bottomBar": "Primary navigation",
+    "mainContent": "Main content",
+    "openMore": "More menu",
+    "langToggle": "Switch language",
+    "more": "More",
     "changeLanguage": "Language",
     "logout": "Log out",
     "userAvatar": "User profile",
@@ -132,6 +137,12 @@
       "done": "Done"
     },
     "empty": "No tasks here"
+  },
+  "morePage": {
+    "title": "More",
+    "subtitle": "Search, calendar, team, and account",
+    "back": "Back",
+    "navAria": "Additional navigation"
   },
   "searchPage": {
     "title": "Search results",
