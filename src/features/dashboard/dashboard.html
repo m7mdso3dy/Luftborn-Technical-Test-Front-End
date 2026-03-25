@@ -113,13 +113,11 @@
         @if (sortOpen()) {
           <div
             class="absolute end-0 z-20 mt-1 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
-            role="listbox"
             [attr.aria-label]="'dashboard.sort.menuAria' | tr: i18n.locale()"
           >
             @for (opt of sortOptions; track opt.key) {
               <button
                 type="button"
-                role="option"
                 [attr.aria-selected]="activeSort() === opt.key"
                 class="w-full px-4 py-2 text-start text-sm text-slate-700 hover:bg-slate-50"
                 [class.font-semibold]="activeSort() === opt.key"
@@ -136,6 +134,7 @@
       <!-- New Task -->
       <button
         type="button"
+        title="New Task"
         class="flex items-center gap-1.5 rounded-lg bg-[#007bff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0069d9]"
         (click)="openCreateTask()"
       >
@@ -173,6 +172,7 @@
           @for (task of columnTasks(col.key); track task.id) {
             <div cdkDrag [cdkDragData]="task" class="kanban-card-drag flex gap-1.5">
               <button
+                title="Drag handle"
                 type="button"
                 cdkDragHandle
                 class="flex w-7 shrink-0 cursor-grab flex-col items-center justify-center self-stretch rounded-lg border border-slate-200/80 bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 active:cursor-grabbing"

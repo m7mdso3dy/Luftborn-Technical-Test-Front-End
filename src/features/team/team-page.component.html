@@ -98,7 +98,7 @@
             <tr>
               <td>
                 @if (u.avatar && (u.avatar.startsWith('http') || u.avatar.startsWith('data:'))) {
-                  <img [src]="u.avatar" [alt]="u.name" class="h-12 w-12 rounded-full object-cover" />
+                  <img [src]="u.avatar" [alt]="u.name" title="User avatar" class="h-12 w-12 rounded-full object-cover" />
                 } @else {
                   <span
                     class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600"

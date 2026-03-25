@@ -19,6 +19,7 @@
       </span>
       @if (showMenu()) {
         <button
+          title="Task menu"
           type="button"
           class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
           [attr.aria-label]="'taskCard.menuAria' | tr: i18n.locale()"
@@ -75,6 +76,7 @@
       <img
         [src]="src"
         [alt]="task().assignee.name"
+        title="Assignee avatar"
         class="h-7 w-7 shrink-0 rounded-full object-cover"
       />
     } @else {

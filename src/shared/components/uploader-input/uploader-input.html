@@ -1,4 +1,5 @@
 <input
+  title="Upload file"
   #fileInput
   type="file"
   class="sr-only"
@@ -12,6 +13,7 @@
   <div class="flex flex-wrap items-center gap-2">
     <p-button
       type="button"
+      title="Choose file"
       [label]="chooseLabel()"
       [disabled]="isDisabled"
       severity="secondary"
@@ -22,6 +24,7 @@
     @if (previewUrl()) {
       <p-button
         type="button"
+        title="Clear file"
         [label]="clearLabel()"
         [disabled]="isDisabled"
         [text]="true"
@@ -33,7 +36,7 @@
   </div>
   @if (previewUrl()) {
     <div class="uploader-input__preview overflow-hidden rounded-md border border-slate-200 bg-slate-50">
-      <img [src]="previewUrl()" alt="" class="h-20 w-20 object-cover" />
+      <img [src]="previewUrl()" alt="" title="File preview" class="h-20 w-20 object-cover" />
     </div>
   }
   @if (errorMessage()) {
