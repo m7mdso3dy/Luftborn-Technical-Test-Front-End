@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
 import { type AppLocale, TranslatePipe, TranslationService } from '../i18n';
+import { ToastModule } from 'primeng/toast';
 import {
   DASHBOARD_SIDE_NAV_ITEMS,
   type DashboardSideNavIcon,
@@ -17,7 +18,7 @@ export type { DashboardSideNavIcon, DashboardSideNavItem } from './dashboard-nav
 
 @Component({
   selector: 'dashboard-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe, TaskFormDialogComponent],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe, TaskFormDialogComponent, ToastModule],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.css',
   host: {
@@ -95,6 +96,11 @@ export class DashboardLayoutComponent implements OnInit {
         ? 'bg-[#007bff] text-white shadow-sm'
         : 'text-slate-600 hover:bg-white hover:text-slate-900',
     ].join(' ');
+  }
+
+  /** PrimeNG Toast position: keep notifications away from the logical “start” edge in RTL. */
+  protected toastPosition(): 'top-right' | 'top-left' {
+    return this.i18n.isRtl() ? 'top-left' : 'top-right';
   }
 
   protected onNewTask(): void {

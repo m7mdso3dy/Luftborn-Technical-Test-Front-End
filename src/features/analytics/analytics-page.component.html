@@ -11,20 +11,13 @@
   </header>
 
   @if (taskStore.tasksLoadError()) {
-    <div
-      class="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-      role="alert"
-    >
-      <p class="text-sm text-red-800">{{ 'analyticsPage.loadError' | tr: i18n.locale() }}</p>
-      <p-button
-        type="button"
-        severity="danger"
-        [outlined]="true"
-        size="small"
-        [label]="'analyticsPage.retry' | tr: i18n.locale()"
-        (onClick)="reload()"
-      />
-    </div>
+    <app-api-feedback
+      tone="error"
+      titleKey="analyticsPage.loadErrorTitle"
+      descriptionKey="analyticsPage.loadErrorHint"
+      actionLabelKey="analyticsPage.retry"
+      (action)="reload()"
+    />
   }
 
   @if (showSkeleton()) {

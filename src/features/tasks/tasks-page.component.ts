@@ -14,6 +14,7 @@ import { forkJoin, timer } from 'rxjs';
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
 import {
+  ApiFeedbackComponent,
   TaskCardComponent,
   TaskFormCoordinatorService,
   TaskStoreService,
@@ -46,6 +47,7 @@ import { TableModule } from 'primeng/table';
     FormsModule,
     Select,
     TranslatePipe,
+    ApiFeedbackComponent,
     TaskCardComponent,
   ],
   providers: [ConfirmationService],

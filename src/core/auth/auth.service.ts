@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 
 import { API_BASE } from '../api/api.constants';
+import { HTTP_SUPPRESS_ERROR_TOAST } from '../interceptors';
 
 const STORAGE_KEY = 'app.auth.token';
 const STORAGE_KEY_USER = 'app.auth.user';
@@ -48,7 +49,11 @@ export class AuthService {
   /** Calls `POST /api/auth/login`; persists JWT on success. */
   login(username: string, password: string): Observable<boolean> {
     const body = { username: username.trim(), password };
-    return this.http.post<LoginResponse>(`${API_BASE}/auth/login`, body).pipe(
+    return this.http
+      .post<LoginResponse>(`${API_BASE}/auth/login`, body, {
+        context: new HttpContext().set(HTTP_SUPPRESS_ERROR_TOAST, true),
+      })
+      .pipe(
       tap((res) => {
         const t = res?.accessToken;
         const u = res?.user;

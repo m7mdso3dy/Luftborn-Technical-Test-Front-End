@@ -75,20 +75,13 @@
   </div>
 
   @if (taskStore.tasksLoadError()) {
-    <div
-      class="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-      role="alert"
-    >
-      <p class="text-sm text-red-800">{{ 'tasksPage.loadError' | tr: i18n.locale() }}</p>
-      <p-button
-        type="button"
-        severity="danger"
-        [outlined]="true"
-        size="small"
-        [label]="'tasksPage.retry' | tr: i18n.locale()"
-        (onClick)="reloadTasks()"
-      />
-    </div>
+    <app-api-feedback
+      tone="error"
+      titleKey="tasksPage.loadErrorTitle"
+      descriptionKey="tasksPage.loadErrorHint"
+      actionLabelKey="tasksPage.retry"
+      (action)="reloadTasks()"
+    />
   }
 
   @if (showSkeleton()) {
@@ -153,11 +146,11 @@
     </div>
   } @else {
     @if (tasks().length === 0) {
-      <p class="rounded-lg border border-dashed border-slate-200 bg-white py-12 text-center text-sm text-slate-500">
-        {{
-          (hasActiveFilters() ? 'tasksPage.emptyFiltered' : 'tasksPage.empty') | tr: i18n.locale()
-        }}
-      </p>
+      <app-api-feedback
+        tone="empty"
+        [titleKey]="hasActiveFilters() ? 'tasksPage.emptyFilteredTitle' : 'tasksPage.emptyTitle'"
+        [descriptionKey]="hasActiveFilters() ? 'tasksPage.emptyFilteredHint' : 'tasksPage.emptyHint'"
+      />
     } @else {
       <div class="tasks-table-wrap hidden overflow-x-auto lg:block">
         <p-table

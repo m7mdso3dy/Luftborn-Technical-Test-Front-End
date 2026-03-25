@@ -1,0 +1,21 @@
+<div [class]="containerClass()" [attr.role]="tone() === 'error' ? 'alert' : null">
+  <div class="min-w-0 text-start">
+    <p [class]="titleClass()">{{ titleKey() | tr: i18n.locale() }}</p>
+    @if (descriptionKey(); as dk) {
+      <p [class]="descriptionClass()">{{ dk | tr: i18n.locale() }}</p>
+    }
+  </div>
+
+  @if (actionLabelKey(); as ak) {
+    <div class="shrink-0 sm:self-center">
+      <p-button
+        type="button"
+        [severity]="tone() === 'error' ? 'danger' : 'secondary'"
+        [outlined]="tone() === 'error'"
+        size="small"
+        [label]="ak | tr: i18n.locale()"
+        (onClick)="action.emit()"
+      />
+    </div>
+  }
+</div>

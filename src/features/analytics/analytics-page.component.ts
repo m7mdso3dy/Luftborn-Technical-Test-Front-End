@@ -10,7 +10,7 @@ import { forkJoin, timer } from 'rxjs';
 
 import { TranslatePipe, TranslationService } from '@core';
 import { SKELETON_MIN_DISPLAY_MS } from '@shared/constants/ui-timing';
-import { TaskStoreService } from '@shared';
+import { ApiFeedbackComponent, TaskStoreService } from '@shared';
 import { type Task, type TaskPriority, type TaskStatus } from '@shared/models/task.types';
 import { MenuItem } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -27,6 +27,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     ChartModule,
     SkeletonModule,
     TranslatePipe,
+    ApiFeedbackComponent,
   ],
   templateUrl: './analytics-page.component.html',
   styleUrl: './analytics-page.component.css',
