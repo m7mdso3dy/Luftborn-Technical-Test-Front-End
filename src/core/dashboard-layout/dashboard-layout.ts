@@ -10,12 +10,7 @@ import {
   type DashboardSideNavIcon,
   type DashboardSideNavItem,
 } from './dashboard-nav.config';
-import {
-  TaskFormCoordinatorService,
-  TaskFormDialogComponent,
-  TaskStoreService,
-  TeamStoreService,
-} from '@shared';
+import { TaskFormCoordinatorService, TaskFormDialogComponent, TaskStoreService } from '@shared';
 import { type Task } from '@shared/models/task.types';
 
 export type { DashboardSideNavIcon, DashboardSideNavItem } from './dashboard-nav.config';
@@ -35,7 +30,6 @@ export class DashboardLayoutComponent implements OnInit {
   private readonly auth = inject(AuthService);
   protected readonly taskForm = inject(TaskFormCoordinatorService);
   private readonly taskStore = inject(TaskStoreService);
-  private readonly teamStore = inject(TeamStoreService);
 
   /** Header search field; synced from `?q=` when on `/dashboard/search`. */
   protected readonly searchDraft = signal('');
@@ -50,7 +44,6 @@ export class DashboardLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.teamStore.refresh().subscribe();
     this.syncSearchFromUrl();
   }
 
