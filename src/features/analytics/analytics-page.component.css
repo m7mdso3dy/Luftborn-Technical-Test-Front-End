@@ -1,0 +1,11 @@
+@reference 'tailwindcss';
+
+.analytics-page {
+  @apply p-1 sm:p-0;
+}
+
+/* Let Chart.js fill the fixed-height wrapper (see PrimeNG Chart + Chart.js). */
+:host ::ng-deep .analytics-chart-host .p-chart,
+:host ::ng-deep .analytics-chart-host canvas {
+  max-height: 100%;
+}

@@ -169,6 +169,25 @@
     "resultCount": "Matches",
     "loading": "Loading search results"
   },
+  "analyticsPage": {
+    "title": "Analytics",
+    "description": "Visual breakdown of tasks by workflow status, priority, and due dates.",
+    "breadcrumb": {
+      "dashboard": "Dashboard",
+      "analytics": "Analytics"
+    },
+    "charts": {
+      "byStatus": "Tasks by status",
+      "byPriority": "Tasks by priority",
+      "byOverdue": "Overdue vs on track"
+    },
+    "overdue": "Overdue",
+    "notOverdue": "Not overdue",
+    "datasetLabel": "Tasks",
+    "loadError": "Could not load task data for charts.",
+    "retry": "Try again",
+    "loadingSkeleton": "Loading analytics"
+  },
   "taskForm": {
     "titleCreate": "New task",
     "titleEdit": "Edit task",

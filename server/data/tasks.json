@@ -4,7 +4,7 @@
       "id": "task-001",
       "title": "Design new homepage layout",
       "description": "Create wireframes and mockups for the new homepage redesign with modern UI elements",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "high",
       "dueAt": "2026-03-26",
       "dueDate": "2026-03-26",
@@ -20,7 +20,7 @@
         "Design"
       ],
       "createdAt": "2026-03-22T14:23:26.784Z",
-      "updatedAt": "2026-03-24T14:23:26.784Z"
+      "updatedAt": "2026-03-25T06:40:19.528Z"
     },
     {
       "id": "task-002",
@@ -401,6 +401,6 @@
   ],
   "meta": {
     "totalCount": 18,
-    "lastUpdated": "2026-03-24T14:37:55.593Z"
+    "lastUpdated": "2026-03-25T06:40:19.528Z"
   }
 }

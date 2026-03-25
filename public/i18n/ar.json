@@ -169,6 +169,25 @@
     "resultCount": "عدد النتائج",
     "loading": "جاري تحميل نتائج البحث"
   },
+  "analyticsPage": {
+    "title": "التحليلات",
+    "description": "عرض مرئي للمهام حسب الحالة والأولوية وتواريخ الاستحقاق.",
+    "breadcrumb": {
+      "dashboard": "لوحة التحكم",
+      "analytics": "التحليلات"
+    },
+    "charts": {
+      "byStatus": "المهام حسب الحالة",
+      "byPriority": "المهام حسب الأولوية",
+      "byOverdue": "متأخرة مقابل في الموعد"
+    },
+    "overdue": "متأخرة",
+    "notOverdue": "ليس متأخراً",
+    "datasetLabel": "المهام",
+    "loadError": "تعذر تحميل بيانات المهام للمخططات.",
+    "retry": "إعادة المحاولة",
+    "loadingSkeleton": "جاري تحميل التحليلات"
+  },
   "taskForm": {
     "titleCreate": "مهمة جديدة",
     "titleEdit": "تعديل المهمة",

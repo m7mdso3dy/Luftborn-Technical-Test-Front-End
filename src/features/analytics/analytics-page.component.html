@@ -1,0 +1,87 @@
+<div class="analytics-page flex flex-col gap-6">
+  <p-breadcrumb [model]="breadcrumbItems()" styleClass="border-0 bg-transparent p-0" />
+
+  <header class="flex flex-col gap-1">
+    <h1 class="text-2xl font-semibold text-slate-900">
+      {{ 'analyticsPage.title' | tr: i18n.locale() }}
+    </h1>
+    <p class="max-w-3xl text-sm leading-relaxed text-slate-600">
+      {{ 'analyticsPage.description' | tr: i18n.locale() }}
+    </p>
+  </header>
+
+  @if (taskStore.tasksLoadError()) {
+    <div
+      class="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      role="alert"
+    >
+      <p class="text-sm text-red-800">{{ 'analyticsPage.loadError' | tr: i18n.locale() }}</p>
+      <p-button
+        type="button"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        [label]="'analyticsPage.retry' | tr: i18n.locale()"
+        (onClick)="reload()"
+      />
+    </div>
+  }
+
+  @if (showSkeleton()) {
+    <div
+      class="grid grid-cols-1 gap-6 lg:grid-cols-2"
+      role="status"
+      [attr.aria-label]="'analyticsPage.loadingSkeleton' | tr: i18n.locale()"
+    >
+      @for (i of [0, 1, 2]; track i) {
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p-skeleton width="40%" height="1.125rem" class="mb-4" borderRadius="4px" />
+          <p-skeleton width="100%" height="16rem" borderRadius="8px" />
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <section
+        class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        [attr.aria-label]="'analyticsPage.charts.byStatus' | tr: i18n.locale()"
+      >
+        <h2 class="mb-4 text-base font-semibold text-slate-800">
+          {{ 'analyticsPage.charts.byStatus' | tr: i18n.locale() }}
+        </h2>
+        <div class="analytics-chart-host h-72">
+          <p-chart type="bar" [data]="statusChartData()" [options]="chartOptions()" class="block h-full w-full" />
+        </div>
+      </section>
+
+      <section
+        class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+        [attr.aria-label]="'analyticsPage.charts.byPriority' | tr: i18n.locale()"
+      >
+        <h2 class="mb-4 text-base font-semibold text-slate-800">
+          {{ 'analyticsPage.charts.byPriority' | tr: i18n.locale() }}
+        </h2>
+        <div class="analytics-chart-host h-72">
+          <p-chart type="bar" [data]="priorityChartData()" [options]="chartOptions()" class="block h-full w-full" />
+        </div>
+      </section>
+
+      <section
+        class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:col-span-2 lg:max-w-xl lg:justify-self-center"
+        [attr.aria-label]="'analyticsPage.charts.byOverdue' | tr: i18n.locale()"
+      >
+        <h2 class="mb-4 text-center text-base font-semibold text-slate-800">
+          {{ 'analyticsPage.charts.byOverdue' | tr: i18n.locale() }}
+        </h2>
+        <div class="analytics-chart-host mx-auto h-72 max-w-md">
+          <p-chart
+            type="doughnut"
+            [data]="overdueChartData()"
+            [options]="doughnutOptions()"
+            class="block h-full w-full"
+          />
+        </div>
+      </section>
+    </div>
+  }
+</div>

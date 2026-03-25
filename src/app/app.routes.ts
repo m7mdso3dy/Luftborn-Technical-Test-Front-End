@@ -30,6 +30,9 @@ const loadTaskSearchPage = () =>
 const loadMobileMorePage = () =>
   import('@features/mobile-more/mobile-more-page.component').then((m) => m.MobileMorePageComponent);
 
+const loadAnalyticsPage = () =>
+  import('@features/analytics/analytics-page.component').then((m) => m.AnalyticsPageComponent);
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -55,7 +58,7 @@ export const routes: Routes = [
           { path: 'search', loadComponent: loadTaskSearchPage, data: { title: 'Search' } },
           { path: 'more', loadComponent: loadMobileMorePage, data: { title: 'More' } },
           { path: 'calendar', loadComponent: loadShellOutlet },
-          { path: 'analytics', loadComponent: loadShellOutlet },
+          { path: 'analytics', loadComponent: loadAnalyticsPage, data: { title: 'Analytics' } },
           { path: 'team', loadComponent: loadTeamPage, data: { title: 'Team' } },
           { path: 'settings', loadComponent: loadShellOutlet },
         ],
